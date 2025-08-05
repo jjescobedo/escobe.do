@@ -1,0 +1,19 @@
+{
+  "name": "escobe-portfolio",
+  "version": "1.0.0",
+  "description": "Personal portfolio website for escobe.do",
+  "main": "index.html",
+  "scripts": {
+    "dev": "live-server --port=3000 --open=/ --watch=assets,index.html",
+    "build": "echo 'Building project...' && npm run css:minify && npm run js:minify",
+    "css:minify": "echo 'CSS minification would go here'",
+    "js:minify": "echo 'JS minification would go here'",
+    "deploy": "npm run build && echo 'Ready for deployment to Cloudflare Pages'"
+  },
+  "keywords": ["portfolio", "website", "javascript", "visualization"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
