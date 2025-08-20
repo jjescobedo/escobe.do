@@ -8,12 +8,11 @@ class StarSystem {
     this.x = (project.galaxyPosition.x - 0.5) * maxDist * 1.5;
     this.y = (project.galaxyPosition.y - 0.5) * maxDist * 1.5;
     
-    // --- Properties for smooth animation ---
     this.baseRadius = 8;
     this.hoverRadius = 12;
     this.currentRadius = this.baseRadius;
     this.targetRadius = this.baseRadius;
-    this.easingFactor = 0.1; // Controls how fast the animation is
+    this.easingFactor = 0.1;
     this.isHovered = false;
   }
 
@@ -22,26 +21,30 @@ class StarSystem {
     this.targetRadius = isHovered ? this.hoverRadius : this.baseRadius;
   }
   
-  // --- NEW METHOD ---
-  // This runs every frame to smoothly adjust the radius
   update() {
     let ease = (this.targetRadius - this.currentRadius) * this.easingFactor;
     this.currentRadius += ease;
   }
 
-  draw(ctx) {
-    // This class is now ONLY responsible for drawing the star circle.
-    // The tooltip is handled by GalaxyView to ensure it's on top and not rotated.
-    ctx.fillStyle = this.color;
+  draw(ctx, globalAlpha = 1.0) {
+    ctx.save();
+    
+    ctx.translate(this.x, this.y);
+
+    const currentRadius = this.currentRadius;
+
+    const starColor = this.color.replace(')', `, ${globalAlpha})`).replace('hsl', 'hsla');
+    ctx.fillStyle = starColor;
     ctx.shadowColor = this.color;
     ctx.shadowBlur = 20;
 
     ctx.beginPath();
-    // Use the smoothly-animated currentRadius
-    ctx.arc(this.x, this.y, this.currentRadius, 0, Math.PI * 2);
+    ctx.arc(0, 0, currentRadius, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.shadowBlur = 0;
+    
+    ctx.restore();
   }
 
   isClicked(mouseX, mouseY) {

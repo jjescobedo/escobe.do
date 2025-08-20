@@ -12,7 +12,7 @@ class Hyperspeed {
   createStar() {
     return {
       angle: Math.random() * Math.PI * 2,
-      distance: Math.random() * this.canvas.width,
+      distance: Math.random() * this.canvas.width * 2,
       speed: Math.random() * 2.5 + 1,
       size: Math.random() * 2.5 + 1,
       alpha: Math.random() * 0.75 + 0.25,

@@ -7,11 +7,10 @@ class App {
     this.mouseX = 0;
     this.mouseY = 0;
     
-    // --- Advanced State Management ---
     this.appState = 'GALAXY';
     this.transitionState = {
         progress: 0,
-        duration: 60, // Default duration for fades (1 sec)
+        duration: 60,
         targetViewData: null
     };
 
@@ -27,7 +26,6 @@ class App {
     this.update();
   }
 
-  // --- STATE TRANSITION INITIATORS ---
   showGalaxy() {
     this.appState = 'GALAXY';
     this.activeView = new GalaxyView(this.projectData, this.canvas);
@@ -37,14 +35,14 @@ class App {
   beginTransitionToSystem(projectData) {
     this.appState = 'FADING_OUT_GALAXY';
     this.transitionState.progress = 0;
-    this.transitionState.duration = 60; // 1 second fade out
+    this.transitionState.duration = 60;
     this.transitionState.targetViewData = projectData;
   }
   
   beginTransitionToGalaxy() {
     this.appState = 'FADING_OUT_SOLAR';
     this.transitionState.progress = 0;
-    this.transitionState.duration = 60; // 1 second fade out
+    this.transitionState.duration = 60;
   }
 
   async loadData() {
@@ -52,7 +50,6 @@ class App {
     this.projectData = await response.json();
   }
 
-  // --- MAIN UPDATE LOOP (THE STATE MACHINE) ---
   update() {
     const ts = this.transitionState;
 
@@ -69,7 +66,7 @@ class App {
                 this.appState = this.appState === 'FADING_OUT_GALAXY' ? 'HYPERSPEED_IN' : 'HYPERSPEED_OUT';
                 this.activeView = new Hyperspeed(this.canvas, this.appState === 'HYPERSPEED_IN' ? 'in' : 'out');
                 ts.progress = 0;
-                ts.duration = 180; // 3 seconds for hyperspeed
+                ts.duration = 180;
             }
             break;
             
@@ -79,9 +76,9 @@ class App {
             ts.progress++;
             if (ts.progress >= ts.duration) {
                 this.appState = this.appState === 'HYPERSPEED_IN' ? 'PAUSE_BEFORE_SOLAR' : 'PAUSE_BEFORE_GALAXY';
-                this.activeView = null; // Clear the hyperspeed view
+                this.activeView = null;
                 ts.progress = 0;
-                ts.duration = 90; // 1.5 second pause
+                ts.duration = 90;
             }
             break;
 
@@ -98,7 +95,7 @@ class App {
                     this.activeView.setTransitionCallback((project) => this.beginTransitionToSystem(project));
                 }
                 ts.progress = 0;
-                ts.duration = 120; // 2 second fade in
+                ts.duration = 120;
             }
             break;
             
@@ -116,7 +113,6 @@ class App {
     requestAnimationFrame(() => this.update());
   }
 
-  // --- MAIN DRAW LOOP (STATE-DRIVEN) ---
   draw() {
     this.ctx.fillStyle = '#00001a';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -151,7 +147,6 @@ class App {
     }
   }
   
-  // --- Event Handlers ---
   handleMouseMove(event) {
     const rect = this.canvas.getBoundingClientRect();
     this.mouseX = event.clientX - rect.left;

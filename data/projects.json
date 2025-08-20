@@ -11,7 +11,8 @@
     },
     "planets": [
       { "name": "Architecture", "info": "...", "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)" },
-      { "name": "Navigation", "info": "...", "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)" }
+      { "name": "Navigation", "info": "...", "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)" },
+      { "name": "Test", "info": "...", "orbitRadius": 300, "size": 12, "color": "hsl(260, 80%, 75%)" }
     ]
   },
   {

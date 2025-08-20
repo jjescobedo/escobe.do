@@ -7,9 +7,11 @@ class GalaxyView {
 
     this.layerConfigs = [
         { numParticles: 2000, armTightness: 1.2, armSpread: 1.6, minSize: 0.4, maxSize: 0.8, minAlpha: 0.1, maxAlpha: 0.3, rotationSpeed: 0.0001, color: 'hsl(240, 80%, 70%)' },
-        { numParticles: 2400, armTightness: 0.1, armSpread: 0.6, minSize: 0.5, maxSize: 1.2, minAlpha: 0.4, maxAlpha: 0.8, rotationSpeed: 0.00075, color: 'hsl(260, 90%, 80%)' },
+        { numParticles: 2400, armTightness: 0.1, armSpread: 3, minSize: 0.5, maxSize: 1.2, minAlpha: 0.4, maxAlpha: 0.8, rotationSpeed: 0.00095, color: 'hsl(260, 90%, 80%)' },
+        { numParticles: 1000, armTightness: 0.6, armSpread: 1.8, minSize: 0.5, maxSize: 0.8, minAlpha: 0.6, maxAlpha: 0.9, rotationSpeed: 0.0006, color: 'hsl(260, 90%, 80%)' },
         { numParticles: 1400, armTightness: 0.2, armSpread: 0.3, minSize: 0.8, maxSize: 1.8, minAlpha: 0.7, maxAlpha: 1.0, rotationSpeed: 0.0004, color: 'white' }
     ];
+    
     this.numArms = 6;
 
     for (const project of Object.values(data)) {
@@ -49,13 +51,13 @@ class GalaxyView {
 
     const centerX = this.canvas.width / 2;
     const centerY = this.canvas.height / 2;
-    const midgroundRotation = this.layers[1].rotation;
+    const foregroundRotation = this.layers[this.layers.length -1].rotation;
     const dx = mouseX - centerX;
     const dy = mouseY - centerY;
     const angle = Math.atan2(dy, dx);
     const dist = Math.sqrt(dx * dx + dy * dy);
-    const rotatedX = Math.cos(angle - midgroundRotation) * dist;
-    const rotatedY = Math.sin(angle - midgroundRotation) * dist;
+    const rotatedX = Math.cos(angle - foregroundRotation) * dist;
+    const rotatedY = Math.sin(angle - foregroundRotation) * dist;
     
     let starIsHovered = false;
     for (const system of this.starSystems) {
@@ -80,7 +82,7 @@ class GalaxyView {
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
       }
-      if (index === 1) {
+      if (index === this.layers.length - 1) {
         ctx.globalAlpha = 1.0;
         for (const system of this.starSystems) {
           system.draw(ctx, globalAlpha);
@@ -91,9 +93,9 @@ class GalaxyView {
 
     for (const system of this.starSystems) {
       if (system.isHovered) {
-        const midgroundRotation = this.layers[1].rotation;
-        const cosR = Math.cos(midgroundRotation);
-        const sinR = Math.sin(midgroundRotation);
+        const foregroundRotation = this.layers[this.layers.length - 1].rotation;
+        const cosR = Math.cos(foregroundRotation);
+        const sinR = Math.sin(foregroundRotation);
         const screenX = centerX + (system.x * cosR - system.y * sinR);
         const screenY = centerY + (system.x * sinR + system.y * cosR);
         ctx.font = '14px monospace';

@@ -19,11 +19,11 @@ class InfoBox {
     this.isOpen = false;
   }
 
-  draw(ctx) {
+  draw(ctx, globalAlpha = 1.0) {
     if (!this.isOpen) return;
 
     ctx.font = '14px monospace';
-    const lines = this.text.split('\n'); // Simple line breaks
+    const lines = this.text.split('\n');
     let maxWidth = ctx.measureText(this.title).width;
     lines.forEach(line => {
       const lineWidth = ctx.measureText(line).width;
@@ -35,21 +35,18 @@ class InfoBox {
     const boxWidth = maxWidth + padding * 2;
     const boxHeight = (lines.length + 1) * lineHeight + padding * 2;
 
-    // Draw box
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-    ctx.strokeStyle = 'white';
+    ctx.fillStyle = `rgba(0, 0, 0, ${0.8 * globalAlpha})`;
+    ctx.strokeStyle = `rgba(255, 255, 255, ${globalAlpha})`;
     ctx.lineWidth = 1;
     ctx.fillRect(this.x, this.y, boxWidth, boxHeight);
     ctx.strokeRect(this.x, this.y, boxWidth, boxHeight);
 
-    // Draw title (bold)
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = `rgba(255, 255, 255, ${globalAlpha})`;
     ctx.font = 'bold 16px monospace';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.fillText(this.title, this.x + padding, this.y + padding);
 
-    // Draw info text
     ctx.font = '14px monospace';
     lines.forEach((line, i) => {
       ctx.fillText(line, this.x + padding, this.y + padding + lineHeight * (i + 1.2));

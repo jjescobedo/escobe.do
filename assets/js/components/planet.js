@@ -4,10 +4,9 @@ class Planet {
     this.orbitRadius = planetData.orbitRadius;
     this.size = planetData.size;
     this.color = planetData.color;
-    this.angle = Math.random() * Math.PI * 2; // Random starting position
+    this.angle = Math.random() * Math.PI * 2;
     this.speed = (1 / this.orbitRadius) * 0.5;
     
-    // Position is calculated in update
     this.x = 0;
     this.y = 0;
   }
@@ -18,8 +17,10 @@ class Planet {
     this.y = Math.sin(this.angle) * this.orbitRadius;
   }
 
-  draw(ctx) {
-    ctx.fillStyle = this.color;
+  // --- MODIFIED DRAW METHOD ---
+  draw(ctx, globalAlpha = 1.0) {
+    const planetColor = this.color.replace(')', `, ${globalAlpha})`).replace('hsl', 'hsla');
+    ctx.fillStyle = planetColor;
     ctx.shadowColor = this.color;
     ctx.shadowBlur = 15;
     
