@@ -35,22 +35,33 @@ class AboutView {
         ctx.fill();
     }
 
-    // Layer 2: Draw the main "Black Hole" object
+    // Layer 2: Draw the main white star center (matching galaxy center)
     const currentRadius = this.radius + this.pulse;
-    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, currentRadius * 1.5);
-    gradient.addColorStop(0, `rgba(10, 5, 20, ${globalAlpha})`);
-    gradient.addColorStop(0.8, `rgba(50, 30, 80, ${globalAlpha * 0.5})`);
-    gradient.addColorStop(1, `rgba(100, 80, 150, 0)`);
+    
+    // Create a radial gradient for a "white star" or "light core" effect
+    const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, currentRadius);
+    gradient.addColorStop(0, `rgba(255, 255, 255, ${globalAlpha})`);
+    gradient.addColorStop(0.3, `rgba(240, 248, 255, ${globalAlpha * 0.9})`);
+    gradient.addColorStop(0.7, `rgba(200, 220, 255, ${globalAlpha * 0.6})`);
+    gradient.addColorStop(1, `rgba(150, 180, 255, 0)`);
     
     ctx.fillStyle = gradient;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, currentRadius * 3, 0, Math.PI * 2);
+    ctx.arc(centerX, centerY, currentRadius * 2.5, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = `rgba(0, 0, 0, ${globalAlpha})`;
+    // Draw the solid bright core
+    ctx.fillStyle = `rgba(255, 255, 255, ${globalAlpha})`;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, currentRadius * 0.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Add a subtle outer ring for definition
+    ctx.strokeStyle = `rgba(255, 255, 255, ${globalAlpha * 0.8})`;
+    ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.arc(centerX, centerY, currentRadius, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.stroke();
     
     // Layer 3: Draw UI
     ctx.strokeStyle = `rgba(255, 255, 255, ${globalAlpha})`;

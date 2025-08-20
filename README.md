@@ -1,0 +1,2 @@
+escobe.do - Interactive Space Portfolio
+A space-themed personal portfolio website featuring an interactive galaxy visualization built with vanilla JavaScript and HTML5 Canvas. Navigate through star systems representing different projects in an immersive cosmic experience.

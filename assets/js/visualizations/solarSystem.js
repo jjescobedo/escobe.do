@@ -4,122 +4,215 @@ class SolarSystemView {
     this.canvas = canvas;
     this.onBack = onBack;
     this.planets = [];
-    this.modal = new ProjectModal(); // Use the new ProjectModal
+    this.modal = new ProjectModal();
     this.backButton = { x: 40, y: 40, radius: 20 };
+    
+    // Pre-calculate center position
+    this.centerX = canvas.width / 2;
+    this.centerY = canvas.height / 2;
+    
+    // Optimized background stars - fewer stars, better performance
     this.backgroundStars = [];
-
-    for (let i = 0; i < 400; i++) {
-        this.backgroundStars.push({
-            x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-            size: Math.random() * 1.5 + 0.5, alpha: Math.random() * 0.5 + 0.1
-        });
+    this.starCount = 200; // Reduced from 400
+    this.initializeBackgroundStars();
+    
+    // Initialize planets
+    if (this.projectData.planets) {
+      this.projectData.planets.forEach(pData => {
+        this.planets.push(new Planet(pData));
+      });
     }
+    
+    // Pre-calculate sun properties
+    const sunData = this.projectData.sun;
+    this.sunColor = sunData.color || 'hsl(60, 100%, 100%)';
+    this.sunRadius = 50;
+    
+    // Performance tracking
+    this.lastUpdateTime = 0;
+    this.updateInterval = 16; // ~60fps
+    
+    // Star recycling pool
+    this.recycledStars = [];
+  }
 
-    this.projectData.planets.forEach(pData => {
-      this.planets.push(new Planet(pData));
-    });
+  initializeBackgroundStars() {
+    for (let i = 0; i < this.starCount; i++) {
+      this.backgroundStars.push({
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height,
+        size: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.5 + 0.1,
+        speed: 0.05 + Math.random() * 0.1 // Variable speed for depth
+      });
+    }
   }
 
   update(mouseX, mouseY) {
-    if (!this.modal.isOpen) {
-        this.planets.forEach(planet => planet.update());
+    const currentTime = Date.now();
+    if (currentTime - this.lastUpdateTime < this.updateInterval) return;
+    this.lastUpdateTime = currentTime;
+
+    // Always update planets - no modal checks
+    for (let i = 0; i < this.planets.length; i++) {
+      this.planets[i].update();
     }
     
-    for (const star of this.backgroundStars) {
-        star.y += 0.1;
-        if (star.y > this.canvas.height) {
-            star.y = 0;
-            star.x = Math.random() * this.canvas.width;
-        }
+    // Optimized star animation with recycling
+    for (let i = 0; i < this.backgroundStars.length; i++) {
+      const star = this.backgroundStars[i];
+      star.y += star.speed;
+      
+      if (star.y > this.canvas.height) {
+        // Recycle star instead of creating new properties
+        star.y = -star.size;
+        star.x = Math.random() * this.canvas.width;
+      }
+    }
+    
+    // Update center position if canvas was resized
+    if (this.centerX !== this.canvas.width / 2 || this.centerY !== this.canvas.height / 2) {
+      this.centerX = this.canvas.width / 2;
+      this.centerY = this.canvas.height / 2;
     }
   }
 
   draw(ctx, globalAlpha = 1.0) {
-    for (const star of this.backgroundStars) {
-        ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha * globalAlpha})`;
+    // Batch draw background stars
+    this.drawBackgroundStars(ctx, globalAlpha);
+    
+    // Save context once for all solar system elements
+    ctx.save();
+    ctx.translate(this.centerX, this.centerY);
+
+    // Draw orbit paths with single style setting
+    ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * globalAlpha})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    
+    for (let i = 0; i < this.planets.length; i++) {
+      ctx.moveTo(this.planets[i].orbitRadius, 0);
+      ctx.arc(0, 0, this.planets[i].orbitRadius, 0, Math.PI * 2);
+    }
+    ctx.stroke();
+
+    // Draw sun with cached color
+    this.drawSun(ctx, globalAlpha);
+
+    // Draw all planets
+    for (let i = 0; i < this.planets.length; i++) {
+      this.planets[i].draw(ctx, globalAlpha);
+    }
+    
+    ctx.restore();
+    
+    // Draw UI elements
+    this.drawUI(ctx, globalAlpha);
+  }
+
+  drawBackgroundStars(ctx, globalAlpha) {
+    // Batch draw stars with minimal context changes
+    ctx.save();
+    
+    for (let i = 0; i < this.backgroundStars.length; i++) {
+      const star = this.backgroundStars[i];
+      const alpha = star.alpha * globalAlpha;
+      
+      if (alpha > 0.05) { // Skip nearly invisible stars
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
+      }
     }
-
-    const centerX = this.canvas.width / 2;
-    const centerY = this.canvas.height / 2;
-    ctx.save();
-    ctx.translate(centerX, centerY);
-
-    ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * globalAlpha})`;
-    ctx.lineWidth = 1;
-    this.planets.forEach(planet => {
-      ctx.beginPath();
-      ctx.arc(0, 0, planet.orbitRadius, 0, Math.PI * 2);
-      ctx.stroke();
-    });
-
-    const sunData = this.projectData.sun;
     
-    // --- THIS IS THE FIX ---
-    // We check if sunData.color exists. If not, we default to white.
-    const sunBaseColor = sunData.color || 'hsl(60, 100%, 100%)';
-    const sunFillColor = sunBaseColor.replace(')', `, ${globalAlpha})`).replace('hsl', 'hsla');
-
-    ctx.fillStyle = sunFillColor;
-    ctx.shadowColor = sunBaseColor;
-    ctx.shadowBlur = 50;
-    ctx.beginPath();
-    ctx.arc(0, 0, 50, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-
-    this.planets.forEach(planet => planet.draw(ctx, globalAlpha));
     ctx.restore();
+  }
+
+  drawSun(ctx, globalAlpha) {
+    const sunFillColor = this.sunColor.replace(')', `, ${globalAlpha})`).replace('hsl', 'hsla');
     
+    ctx.fillStyle = sunFillColor;
+    ctx.shadowColor = this.sunColor;
+    ctx.shadowBlur = 50;
+    
+    ctx.beginPath();
+    ctx.arc(0, 0, this.sunRadius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.shadowBlur = 0; // Reset shadow to avoid affecting other elements
+  }
+
+  drawUI(ctx, globalAlpha) {
+    // Draw back button
     ctx.strokeStyle = `rgba(255, 255, 255, ${globalAlpha})`;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(this.backButton.x, this.backButton.y, this.backButton.radius, 0, Math.PI * 2);
     ctx.stroke();
+    
+    // Draw back arrow
     ctx.font = '20px monospace';
     ctx.fillStyle = `rgba(255, 255, 255, ${globalAlpha})`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('<', this.backButton.x, this.backButton.y);
-
-    if (this.modal.isOpen) {
-        this.modal.draw(ctx, globalAlpha);
-    }
   }
 
   handleClick(event) {
     if (this.modal.isOpen) {
-        this.modal.hide();
-        return;
+      this.modal.hide();
+      return;
     }
 
     const rect = this.canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
 
-    const distToBack = Math.sqrt(Math.pow(mouseX - this.backButton.x, 2) + Math.pow(mouseY - this.backButton.y, 2));
-    if (distToBack < this.backButton.radius) {
+    // Check back button with cached distance calculation
+    const backDeltaX = mouseX - this.backButton.x;
+    const backDeltaY = mouseY - this.backButton.y;
+    const backDistance = backDeltaX * backDeltaX + backDeltaY * backDeltaY; // Skip sqrt for comparison
+    
+    if (backDistance < this.backButton.radius * this.backButton.radius) {
       if (this.onBack) this.onBack();
       return;
     }
 
-    const centerX = this.canvas.width / 2;
-    const centerY = this.canvas.height / 2;
-    const clickX = mouseX - centerX;
-    const clickY = mouseY - centerY;
+    // Convert to solar system coordinates
+    const clickX = mouseX - this.centerX;
+    const clickY = mouseY - this.centerY;
     
-    const sunDist = Math.sqrt(clickX * clickX + clickY * clickY);
-    if (sunDist < 55) {
+    // Check sun click with cached calculation
+    const sunDistanceSquared = clickX * clickX + clickY * clickY;
+    const sunClickRadius = 55;
+    
+    if (sunDistanceSquared < sunClickRadius * sunClickRadius) {
       this.modal.show(this.projectData.sun);
       return;
     }
 
-    for (const planet of this.planets) {
-      if (planet.isClicked(clickX, clickY)) {
-        this.modal.show(planet.data);
+    // Check planet clicks
+    for (let i = 0; i < this.planets.length; i++) {
+      if (this.planets[i].isClicked(clickX, clickY)) {
+        this.modal.show(this.planets[i].data);
         return;
+      }
+    }
+  }
+
+  // Method to handle canvas resize
+  resize(canvas) {
+    this.canvas = canvas;
+    this.centerX = canvas.width / 2;
+    this.centerY = canvas.height / 2;
+    
+    // Redistribute background stars
+    for (let i = 0; i < this.backgroundStars.length; i++) {
+      const star = this.backgroundStars[i];
+      if (star.x > canvas.width || star.y > canvas.height) {
+        star.x = Math.random() * canvas.width;
+        star.y = Math.random() * canvas.height;
       }
     }
   }
