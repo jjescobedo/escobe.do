@@ -3,24 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>James Escobedo | Portfolio</title>
-    <link rel="stylesheet" href="assets/css/main.css">
-    <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
-    </style>
+    <title>escobe.do</title>
+    
+    <!-- Add Google Font to match the reference style -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="assets/css/main.css"> <!-- Your main CSS file -->
 </head>
 <body>
+
+    <!-- The Canvas for our visualization -->
     <canvas id="galaxy-canvas"></canvas>
 
-    <script src="assets/js/components/infoBox.js"></script>
-    <script src="assets/js/components/starSystem.js"></script>
-    <script src="assets/js/components/planet.js"></script>
+    <!-- The Hidden Modal Structure -->
+    <div id="project-modal" class="modal-hidden">
+        <div class="modal-content">
+            <button class="modal-close-button">&times;</button>
+            <h1 id="modal-title"></h1>
+            <h2 id="modal-subtext"></h2>
+            <p id="modal-body"></p>
+        </div>
+    </div>
 
+    <!-- Script Loading Order is Critical -->
+    <script src="assets/js/ui/infoBox.js"></script>
+    <script src="assets/js/ui/projectModal.js"></script> <!-- ADD THIS NEW FILE -->
+    <script src="assets/js/components/starSystem.js"></script>
+    <script src="assets/js/components/galaxyCenter.js"></script>
+    <script src="assets/js/components/planet.js"></script>
+    <script src="assets/js/visualizations/aboutView.js"></script>
     <script src="assets/js/visualizations/galaxy.js"></script>
     <script src="assets/js/visualizations/hyperspeed.js"></script>
     <script src="assets/js/visualizations/solarSystem.js"></script>
-
     <script src="assets/js/main.js"></script>
 
 </body>

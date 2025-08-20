@@ -4,7 +4,7 @@ class SolarSystemView {
     this.canvas = canvas;
     this.onBack = onBack;
     this.planets = [];
-    this.infoBox = new InfoBox();
+    this.modal = new ProjectModal(); // Use the new ProjectModal
     this.backButton = { x: 40, y: 40, radius: 20 };
     this.backgroundStars = [];
 
@@ -21,7 +21,10 @@ class SolarSystemView {
   }
 
   update(mouseX, mouseY) {
-    this.planets.forEach(planet => planet.update());
+    if (!this.modal.isOpen) {
+        this.planets.forEach(planet => planet.update());
+    }
+    
     for (const star of this.backgroundStars) {
         star.y += 0.1;
         if (star.y > this.canvas.height) {
@@ -53,9 +56,14 @@ class SolarSystemView {
     });
 
     const sunData = this.projectData.sun;
-    const sunColor = sunData.color.replace(')', `, ${globalAlpha})`).replace('hsl', 'hsla');
-    ctx.fillStyle = sunColor;
-    ctx.shadowColor = sunData.color;
+    
+    // --- THIS IS THE FIX ---
+    // We check if sunData.color exists. If not, we default to white.
+    const sunBaseColor = sunData.color || 'hsl(60, 100%, 100%)';
+    const sunFillColor = sunBaseColor.replace(')', `, ${globalAlpha})`).replace('hsl', 'hsla');
+
+    ctx.fillStyle = sunFillColor;
+    ctx.shadowColor = sunBaseColor;
     ctx.shadowBlur = 50;
     ctx.beginPath();
     ctx.arc(0, 0, 50, 0, Math.PI * 2);
@@ -76,10 +84,17 @@ class SolarSystemView {
     ctx.textBaseline = 'middle';
     ctx.fillText('<', this.backButton.x, this.backButton.y);
 
-    this.infoBox.draw(ctx, globalAlpha);
+    if (this.modal.isOpen) {
+        this.modal.draw(ctx, globalAlpha);
+    }
   }
 
   handleClick(event) {
+    if (this.modal.isOpen) {
+        this.modal.hide();
+        return;
+    }
+
     const rect = this.canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
@@ -97,17 +112,15 @@ class SolarSystemView {
     
     const sunDist = Math.sqrt(clickX * clickX + clickY * clickY);
     if (sunDist < 55) {
-      this.infoBox.show(this.projectData.sun.name, this.projectData.sun.info, mouseX + 15, mouseY);
+      this.modal.show(this.projectData.sun);
       return;
     }
 
     for (const planet of this.planets) {
       if (planet.isClicked(clickX, clickY)) {
-        this.infoBox.show(planet.data.name, planet.data.info, mouseX + 15, mouseY);
+        this.modal.show(planet.data);
         return;
       }
     }
-    
-    this.infoBox.hide();
   }
 }
