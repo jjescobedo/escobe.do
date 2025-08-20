@@ -1,166 +1,90 @@
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-/* CSS Variables - Easy to customize */
-:root {
-  /* Colors */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #1a1a1a;
-  --bg-accent: #2a2a2a;
-  --text-primary: #ffffff;
-  --text-secondary: #b3b3b3;
-  --text-accent: #64ffda;
-  --border-color: #333333;
-  
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  
-  /* Spacing */
-  --space-xs: 0.5rem;
-  --space-sm: 1rem;
-  --space-md: 2rem;
-  --space-lg: 4rem;
-  --space-xl: 6rem;
-  
-  /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 2rem;
-  --font-size-4xl: 3rem;
-  
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
-  --shadow-glow: 0 0 20px rgba(100, 255, 218, 0.3);
-  
-  /* Transitions */
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
-}
-
-/* Reset and Base Styles */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
+/* General Body Styles */
 body {
-  font-family: var(--font-family);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  overflow-x: hidden;
-  font-size: var(--font-size-base);
+    margin: 0;
+    overflow: hidden;
+    background-color: #00001a;
+    font-family: 'Inter', sans-serif;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+canvas {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Canvas is in the background */
 }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+/* Modal Styles */
+#project-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    max-width: 800px;
+    height: 80vh;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    color: white;
+    z-index: 100; /* Modal is on top of everything */
+    
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    box-sizing: border-box;
+
+    /* Smooth transition for fading in/out */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--text-accent);
-  border-radius: 4px;
+#project-modal.modal-visible {
+    opacity: 1;
+    visibility: visible;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #4fd1c7;
+.modal-content {
+    overflow-y: auto; /* Allow scrolling if content is long */
 }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  line-height: 1.2;
+.modal-close-button {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
 }
 
-h1 { font-size: var(--font-size-4xl); }
-h2 { font-size: var(--font-size-3xl); }
-h3 { font-size: var(--font-size-2xl); }
-
-a {
-  color: var(--text-accent);
-  text-decoration: none;
-  transition: var(--transition-normal);
+.modal-close-button:hover {
+    color: white;
 }
 
-a:hover {
-  color: #4fd1c7;
+/* Font styles to match the reference image */
+#modal-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 1rem;
 }
 
-/* Utility Classes */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--space-md);
+#modal-subtext {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #ccc;
+    margin-top: 0;
+    margin-bottom: 2rem;
+    line-height: 1.5;
 }
 
-.text-center { text-align: center; }
-.text-gradient {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Animation Classes */
-.fade-in {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.fade-in.animate-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Focus Management for Accessibility */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: var(--text-accent);
-  color: var(--bg-primary);
-  padding: 8px;
-  text-decoration: none;
-  z-index: 1001;
-  border-radius: 4px;
-  font-weight: 600;
-}
-
-.skip-link:focus {
-  top: 6px;
-}
-
-/* Responsive Design Helpers */
-@media (max-width: 768px) {
-  :root {
-    --space-md: 1rem;
-    --space-lg: 2rem;
-    --space-xl: 3rem;
-  }
-  
-  .container {
-    padding: 0 var(--space-sm);
-  }
+#modal-body {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: #aaa;
 }

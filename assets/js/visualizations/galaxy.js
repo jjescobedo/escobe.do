@@ -4,7 +4,12 @@ class GalaxyView {
     this.starSystems = [];
     this.layers = [];
     this.onStarSystemClick = null;
+    this.onCenterClick = null; // New callback for the center
+    
+    // Create the new, unique center object
+    this.center = new GalaxyCenter(canvas);
 
+    // Your custom galaxy configuration
     this.layerConfigs = [
         { numParticles: 2000, armTightness: 1.2, armSpread: 1.6, minSize: 0.4, maxSize: 0.8, minAlpha: 0.1, maxAlpha: 0.3, rotationSpeed: 0.0001, color: 'hsl(240, 80%, 70%)' },
         { numParticles: 2400, armTightness: 0.1, armSpread: 0.6, minSize: 0.5, maxSize: 1.2, minAlpha: 0.4, maxAlpha: 0.8, rotationSpeed: 0.00075, color: 'hsl(260, 90%, 80%)' },
@@ -23,6 +28,10 @@ class GalaxyView {
 
   setTransitionCallback(callback) {
     this.onStarSystemClick = callback;
+  }
+
+  setAboutTransitionCallback(callback) {
+    this.onCenterClick = callback;
   }
 
   generateLayer(config) {
@@ -57,13 +66,19 @@ class GalaxyView {
     const rotatedX = Math.cos(angle - midgroundRotation) * dist;
     const rotatedY = Math.sin(angle - midgroundRotation) * dist;
     
-    let starIsHovered = false;
+    let isHoveringSomething = false;
     for (const system of this.starSystems) {
         system.setHover(system.isClicked(rotatedX, rotatedY));
-        if (system.isHovered) starIsHovered = true;
+        if (system.isHovered) isHoveringSomething = true;
         system.update();
     }
-    this.canvas.style.cursor = starIsHovered ? 'pointer' : 'default';
+    
+    // Update the center as well
+    this.center.setHover(this.center.isClicked(rotatedX, rotatedY));
+    if (this.center.isHovered) isHoveringSomething = true;
+    this.center.update();
+
+    this.canvas.style.cursor = isHoveringSomething ? 'pointer' : 'default';
   }
 
   draw(ctx, globalAlpha = 1.0) {
@@ -85,6 +100,8 @@ class GalaxyView {
         for (const system of this.starSystems) {
           system.draw(ctx, globalAlpha);
         }
+        // Draw the center object within the same rotated context as the projects
+        this.center.draw(ctx, globalAlpha);
       }
       ctx.restore();
     });
@@ -113,8 +130,16 @@ class GalaxyView {
   }
   
   handleClick(event) {
-    if (this.onStarSystemClick) {
-        this.onStarSystemClick(this.starSystems.find(s => s.isHovered)?.projectData);
+    // Check for center click first, as it's a larger, more central target
+    if (this.center.isHovered && this.onCenterClick) {
+        this.onCenterClick();
+        return;
+    }
+
+    // Then check for star system click
+    const clickedSystem = this.starSystems.find(system => system.isHovered);
+    if (clickedSystem && this.onStarSystemClick) {
+      this.onStarSystemClick(clickedSystem.projectData);
     }
   }
 }
