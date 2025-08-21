@@ -1,7 +1,7 @@
 [
   {
     "id": "portfolio-website",
-    "name": "Portfolio Website",
+    "name": "escobe.do",
     "galaxyPosition": { "x": 0.35, "y": 0.45 },
     "color": "hsl(190, 100%, 70%)",
     "sun": {
@@ -28,28 +28,35 @@
     ]
   },
   {
-    "id": "classsync",
+    "id": "class-sync",
     "name": "ClassSync",
-    "galaxyPosition": { "x": 0.35, "y": 0.45 },
-    "color": "hsl(190, 100%, 70%)",
+    "galaxyPosition": { "x": 0.45, "y": 0.15 },
+    "color": "hsl(220, 100%, 70%)",
     "sun": {
       "title": "Project Core: ",
       "subtext": "",
-      "color": "hsl(45, 100%, 75%)",
+      "color": "hsl(35, 100%, 75%)",
       "body": ""
     },
     "planets": [
       {
         "name": "",
-        "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
-        "title": "",
+        "orbitRadius": 120, "size": 20, "color": "hsl(200, 80%, 70%)",
+        "title": "Business End",
         "subtext": "",
         "body": ""
       },
       {
         "name": "",
-        "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
-        "title": "",
+        "orbitRadius": 160, "size": 12, "color": "hsl(260, 80%, 75%)",
+        "title": "Front End",
+        "subtext": "",
+        "body": ""
+      },
+      {
+        "name": "",
+        "orbitRadius": 240, "size": 28, "color": "hsl(140, 80%, 75%)",
+        "title": "Back End",
         "subtext": "",
         "body": ""
       }
@@ -57,35 +64,112 @@
   },
   {
     "id": "etc-amp",
-    "name": "ETC Bot",
-    "galaxyPosition": { "x": 0.35, "y": 0.45 },
-    "color": "hsl(190, 100%, 70%)",
+    "name": "AMP ETC Trading Bot",
+    "galaxyPosition": { "x": 0.65, "y": 0.55 },
+    "color": "hsl(300, 100%, 70%)",
     "sun": {
       "title": "Project Core: ",
       "subtext": "",
-      "color": "hsl(45, 100%, 75%)",
+      "color": "hsl(40, 100%, 75%)",
       "body": ""
     },
     "planets": [
       {
         "name": "",
-        "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
-        "title": "",
-        "subtext": "",
-        "body": ""
-      },
-      {
-        "name": "",
-        "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
-        "title": "",
+        "orbitRadius": 300, "size": 30, "color": "hsl(140, 100%, 75%)",
+        "title": "Testing, Testing, Yet More Testing",
         "subtext": "",
         "body": ""
       }
     ]
   },
   {
-    "id": "",
-    "name": "",
+    "id": "alzheimers-detector",
+    "name": "AIS Alzheimers Detector",
+    "galaxyPosition": { "x": 0.2, "y": 0.75 },
+    "color": "hsl(350, 100%, 70%)",
+    "sun": {
+      "title": "Project Core: ",
+      "subtext": "",
+      "color": "hsl(45, 100%, 75%)",
+      "body": ""
+    },
+    "planets": [
+      {
+        "name": "",
+        "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
+        "title": "One of the Classic Blunders",
+        "subtext": "",
+        "body": ""
+      },
+      {
+        "name": "",
+        "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
+        "title": "Success",
+        "subtext": "",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "id": "skin-safe",
+    "name": "SkinSafe",
+    "galaxyPosition": { "x": 0.85, "y": 0.35 },
+    "color": "hsl(400, 100%, 70%)",
+    "sun": {
+      "title": "Project Core: ",
+      "subtext": "",
+      "color": "hsl(45, 100%, 75%)",
+      "body": ""
+    },
+    "planets": [
+      {
+        "name": "",
+        "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
+        "title": "Transition to Mobile",
+        "subtext": "",
+        "body": ""
+      },
+      {
+        "name": "",
+        "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
+        "title": "Love of the Game",
+        "subtext": "",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "id": "cayley-table",
+    "name": "Cayley Table Visualizer",
+    "galaxyPosition": { "x": 0.85, "y": 0.75 },
+    "color": "hsl(500, 100%, 70%)",
+    "sun": {
+      "title": "Project Core: ",
+      "subtext": "",
+      "color": "hsl(45, 100%, 75%)",
+      "body": ""
+    },
+    "planets": [
+      {
+        "name": "",
+        "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
+        "title": "Math in Programming?",
+        "subtext": "",
+        "body": ""
+      },
+      {
+        "name": "",
+        "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
+        "title": "Presenting Code",
+        "subtext": "",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "id": "wordle-ai",
+    "name": "AI Wordle Solver",
     "galaxyPosition": { "x": 0.35, "y": 0.45 },
     "color": "hsl(190, 100%, 70%)",
     "sun": {
@@ -98,14 +182,14 @@
       {
         "name": "",
         "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
-        "title": "",
+        "title": "Pair Programming?",
         "subtext": "",
         "body": ""
       },
       {
         "name": "",
         "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
-        "title": "",
+        "title": "Best Program I've Made... So Far",
         "subtext": "",
         "body": ""
       }
