@@ -1,5 +1,5 @@
 class GalaxyView {
-  constructor(data, canvas) {
+  constructor(data, canvas, aboutData) {
     this.canvas = canvas;
     this.starSystems = [];
     this.layers = [];
@@ -11,6 +11,10 @@ class GalaxyView {
     this.centerY = canvas.height / 2;
     this.lastCanvasWidth = canvas.width;
     this.lastCanvasHeight = canvas.height;
+  // Info modal
+  this.aboutData = aboutData;
+  this.infoModal = new ProjectModal();
+  this.infoButton = { radius: 22 };
     
     // Create the galaxy center
     this.center = new GalaxyCenter(canvas);
@@ -170,40 +174,31 @@ class GalaxyView {
     // Use transform caching
     ctx.save();
     ctx.translate(this.centerX, this.centerY);
-    
     // Draw layers with optimized rendering
     for (let layerIndex = 0; layerIndex < this.layers.length; layerIndex++) {
       const layer = this.layers[layerIndex];
-      
       ctx.save();
       ctx.rotate(layer.rotation);
-      
       // Batch rendering with minimal state changes
       ctx.fillStyle = layer.color;
       ctx.beginPath();
-      
       const positions = layer.positions;
       const sizes = layer.sizes;
       const alphas = layer.alphas;
       const numParticles = positions.length / 2;
-      
       for (let i = 0; i < numParticles; i++) {
         const x = positions[i * 2];
         const y = positions[i * 2 + 1];
         const size = sizes[i];
         const alpha = alphas[i] * globalAlpha;
-        
-        // Only draw particles that are reasonably visible
         if (alpha > 0.05) {
           ctx.globalAlpha = alpha;
           ctx.moveTo(x + size, y);
           ctx.arc(x, y, size, 0, Math.PI * 2);
         }
       }
-      
       ctx.fill();
       ctx.globalAlpha = 1.0;
-      
       // Draw star systems and center only on the final layer
       if (layerIndex === this.layers.length - 1) {
         for (let i = 0; i < this.starSystems.length; i++) {
@@ -211,16 +206,33 @@ class GalaxyView {
         }
         this.center.draw(ctx, globalAlpha);
       }
-      
       ctx.restore();
     }
-    
     ctx.restore();
-
     // Draw hover tooltip only if needed
     if (this.hoveredSystem) {
       this.drawHoverTooltip(ctx, globalAlpha);
     }
+    // Draw info button in top right
+    this.drawInfoButton(ctx, globalAlpha);
+  }
+
+  drawInfoButton(ctx, globalAlpha) {
+    const pad = 24;
+    const x = this.canvas.width - pad - this.infoButton.radius;
+    const y = pad + this.infoButton.radius;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x, y, this.infoButton.radius, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(255,255,255,${globalAlpha})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.font = 'bold 22px monospace';
+    ctx.fillStyle = `rgba(200,200,255,${globalAlpha})`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('i', x, y+1);
+    ctx.restore();
   }
 
   drawHoverTooltip(ctx, globalAlpha) {
@@ -229,30 +241,64 @@ class GalaxyView {
     const sinR = Math.sin(this.foregroundRotation);
     const screenX = this.centerX + (system.x * cosR - system.y * sinR);
     const screenY = this.centerY + (system.x * sinR + system.y * cosR);
-    
-    // Use cached font measurements if possible
+
+    // Get date string if present
+    const dateStr = system.projectData && system.projectData.date ? `Discovered ${system.projectData.date}` : '';
+
+    // Measure both lines
     ctx.font = '14px monospace';
-    const textWidth = ctx.measureText(system.name).width;
+    const nameWidth = ctx.measureText(system.name).width;
+    ctx.font = '12px monospace';
+    const dateWidth = dateStr ? ctx.measureText(dateStr).width : 0;
+    const maxWidth = Math.max(nameWidth, dateWidth);
     const padding = 8;
+    const lineHeight = 20;
     const boxX = screenX + 15;
     const boxY = screenY - 35;
-    
+    const boxHeight = dateStr ? lineHeight + 16 + padding : lineHeight + padding;
+
     ctx.fillStyle = `rgba(0, 0, 0, ${0.75 * globalAlpha})`;
-    ctx.fillRect(boxX, boxY, textWidth + padding * 2, 20 + padding);
+    ctx.fillRect(boxX, boxY, maxWidth + padding * 2, boxHeight);
     ctx.fillStyle = `rgba(255, 255, 255, ${globalAlpha})`;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
+    ctx.font = '14px monospace';
     ctx.fillText(system.name, boxX + padding, boxY + padding / 2 + 2);
+    if (dateStr) {
+      ctx.font = '12px monospace';
+      ctx.fillStyle = `rgba(200, 200, 255, ${globalAlpha})`;
+      ctx.fillText(dateStr, boxX + padding, boxY + padding / 2 + 2 + lineHeight);
+      ctx.fillStyle = `rgba(255, 255, 255, ${globalAlpha})`;
+    }
   }
   
   handleClick(event) {
-    // Check for center click first
+    // Info button click
+    const pad = 24;
+    const x = this.canvas.width - pad - this.infoButton.radius;
+    const y = pad + this.infoButton.radius;
+    const rect = this.canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+    const dist = Math.sqrt(Math.pow(mouseX - x, 2) + Math.pow(mouseY - y, 2));
+    if (dist < this.infoButton.radius) {
+      if (this.infoModal.isOpen) {
+        this.infoModal.hide();
+      } else {
+        if (this.aboutData && this.aboutData.help) {
+          this.infoModal.show({
+            title: this.aboutData.help.title || 'Help',
+            subtext: '',
+            body: this.aboutData.help.body || ''
+          });
+        }
+      }
+      return;
+    }
     if (this.center.isHovered && this.onCenterClick) {
         this.onCenterClick();
         return;
     }
-
-    // Check for star system click
     if (this.hoveredSystem && this.onStarSystemClick) {
       this.onStarSystemClick(this.hoveredSystem.projectData);
     }

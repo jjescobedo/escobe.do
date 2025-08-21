@@ -2,6 +2,7 @@
   {
     "id": "portfolio-website",
     "name": "escobe.do",
+    "date": "Summer 2025",
     "galaxyPosition": { "x": 0.35, "y": 0.45 },
     "color": "hsl(190, 100%, 70%)",
     "sun": {
@@ -12,16 +13,16 @@
     },
     "planets": [
       {
-        "name": "Architecture",
+        "name": "architecture",
         "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
         "title": "Architecture & State Management",
         "subtext": "A clean, scalable Model-View-Controller (MVC) approach.",
         "body": "The application is driven by a central state machine in main.js (Controller). Project and content data is decoupled into JSON files (Model), allowing for easy updates without touching the logic. Visual components are encapsulated into classes like GalaxyView and SolarSystemView (View), ensuring a clean separation of concerns."
       },
       {
-        "name": "Visuals",
+        "name": "visuals",
         "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
-        "title": "Generative & Procedural Visuals",
+        "title": "Generative Visuals and AI",
         "subtext": "Creating a unique, dynamic experience with code.",
         "body": "The galaxy is not a static image; it's procedurally generated using multiple layers of particles distributed along mathematical spirals. This creates a 2.5D parallax effect that gives the scene a sense of depth and life. The hyperspeed transition is also a self-contained, perpetual particle system designed for a smooth, cinematic feel."
       }
@@ -30,6 +31,7 @@
   {
     "id": "class-sync",
     "name": "ClassSync",
+    "date": "2023 - 2025",
     "galaxyPosition": { "x": 0.45, "y": 0.15 },
     "color": "hsl(220, 100%, 70%)",
     "sun": {
@@ -64,7 +66,8 @@
   },
   {
     "id": "etc-amp",
-    "name": "AMP ETC Trading Bot",
+    "name": "Trading Bot",
+    "date": "Summer 2025",
     "galaxyPosition": { "x": 0.65, "y": 0.55 },
     "color": "hsl(300, 100%, 70%)",
     "sun": {
@@ -85,7 +88,8 @@
   },
   {
     "id": "alzheimers-detector",
-    "name": "AIS Alzheimers Detector",
+    "name": "Alzheimers Detector",
+    "date": "Summer 2024",
     "galaxyPosition": { "x": 0.2, "y": 0.75 },
     "color": "hsl(350, 100%, 70%)",
     "sun": {
@@ -114,6 +118,7 @@
   {
     "id": "skin-safe",
     "name": "SkinSafe",
+    "date": "Fall 2024",
     "galaxyPosition": { "x": 0.85, "y": 0.35 },
     "color": "hsl(400, 100%, 70%)",
     "sun": {
@@ -142,6 +147,7 @@
   {
     "id": "cayley-table",
     "name": "Cayley Table Visualizer",
+    "date": "Summer 2023",
     "galaxyPosition": { "x": 0.85, "y": 0.75 },
     "color": "hsl(500, 100%, 70%)",
     "sun": {
@@ -170,6 +176,7 @@
   {
     "id": "wordle-ai",
     "name": "AI Wordle Solver",
+    "date": "Summer 2025",
     "galaxyPosition": { "x": 0.35, "y": 0.45 },
     "color": "hsl(190, 100%, 70%)",
     "sun": {

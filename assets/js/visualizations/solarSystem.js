@@ -34,6 +34,16 @@ class SolarSystemView {
     
     // Star recycling pool
     this.recycledStars = [];
+    // Animated system name reveal
+    this.animatedName = '';
+    this.animatedDate = '';
+    this.nameTypingProgress = 0;
+    this.dateTypingProgress = 0;
+    this.nameTypingDone = false;
+    this.dateTypingDone = false;
+    this.typingStartTime = null;
+    this.typingSpeed = 150; // ms per character
+    this.dateTypingSpeed = 80; // ms per character (date types a bit faster)
   }
 
   initializeBackgroundStars() {
@@ -75,6 +85,34 @@ class SolarSystemView {
       this.centerX = this.canvas.width / 2;
       this.centerY = this.canvas.height / 2;
     }
+    // Animated system name and discovered date typing effect
+    if (!this.nameTypingDone) {
+      if (!this.typingStartTime) {
+        this.typingStartTime = currentTime;
+      }
+      const name = this.projectData.name || '';
+      const elapsed = currentTime - this.typingStartTime;
+      const charsToShow = Math.min(name.length, Math.floor(elapsed / this.typingSpeed));
+      this.animatedName = name.substring(0, charsToShow);
+      this.nameTypingProgress = charsToShow;
+      if (charsToShow === name.length) {
+        this.nameTypingDone = true;
+        this.dateTypingStartTime = currentTime;
+      }
+    } else if (!this.dateTypingDone) {
+      // Type out the discovered date
+      const dateStr = this.projectData.date ? `Discovered ${this.projectData.date}` : '';
+      if (!this.dateTypingStartTime) {
+        this.dateTypingStartTime = currentTime;
+      }
+      const elapsedDate = currentTime - this.dateTypingStartTime;
+      const charsToShow = Math.min(dateStr.length, Math.floor(elapsedDate / this.dateTypingSpeed));
+      this.animatedDate = dateStr.substring(0, charsToShow);
+      this.dateTypingProgress = charsToShow;
+      if (charsToShow === dateStr.length) {
+        this.dateTypingDone = true;
+      }
+    }
   }
 
   draw(ctx, globalAlpha = 1.0) {
@@ -108,6 +146,8 @@ class SolarSystemView {
     
     // Draw UI elements
     this.drawUI(ctx, globalAlpha);
+    // Draw animated system name and date in top left
+    this.drawAnimatedHeader(ctx, globalAlpha);
   }
 
   drawBackgroundStars(ctx, globalAlpha) {
@@ -159,6 +199,26 @@ class SolarSystemView {
     ctx.fillText('<', this.backButton.x, this.backButton.y);
   }
 
+  drawAnimatedHeader(ctx, globalAlpha) {
+    // Position just right of back button
+    const leftPad = this.backButton.x + this.backButton.radius + 18;
+    const topPad = 18;
+    // Use galaxy font style
+    ctx.save();
+    ctx.font = 'bold 28px monospace';
+    ctx.fillStyle = `rgba(255,255,255,${globalAlpha})`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(this.animatedName, leftPad, topPad);
+
+    // Draw date below name as it types out
+    if (this.animatedDate) {
+      ctx.font = '16px monospace';
+      ctx.fillStyle = `rgba(200,200,255,${globalAlpha})`;
+      ctx.fillText(this.animatedDate, leftPad, topPad + 34);
+    }
+    ctx.restore();
+  }
   handleClick(event) {
     if (this.modal.isOpen) {
       this.modal.hide();

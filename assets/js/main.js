@@ -140,7 +140,7 @@ class App {
 
   showGalaxy() {
     this.appState = 'GALAXY';
-    this.activeView = new GalaxyView(this.projectData, this.canvas);
+    this.activeView = new GalaxyView(this.projectData, this.canvas, this.aboutData);
     this.activeView.setTransitionCallback((project) => this.beginTransitionToSystem(project));
     this.activeView.setAboutTransitionCallback(() => this.beginTransitionToAbout());
   }
@@ -251,7 +251,7 @@ class App {
             }
           } else {
             this.appState = 'FADING_IN_GALAXY';
-            this.activeView = new GalaxyView(this.projectData, this.canvas);
+            this.activeView = new GalaxyView(this.projectData, this.canvas, this.aboutData);
             this.activeView.setTransitionCallback((project) => this.beginTransitionToSystem(project));
             this.activeView.setAboutTransitionCallback(() => this.beginTransitionToAbout());
           }
