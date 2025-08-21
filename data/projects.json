@@ -26,5 +26,89 @@
         "body": "The galaxy is not a static image; it's procedurally generated using multiple layers of particles distributed along mathematical spirals. This creates a 2.5D parallax effect that gives the scene a sense of depth and life. The hyperspeed transition is also a self-contained, perpetual particle system designed for a smooth, cinematic feel."
       }
     ]
+  },
+  {
+    "id": "classsync",
+    "name": "ClassSync",
+    "galaxyPosition": { "x": 0.35, "y": 0.45 },
+    "color": "hsl(190, 100%, 70%)",
+    "sun": {
+      "title": "Project Core: ",
+      "subtext": "",
+      "color": "hsl(45, 100%, 75%)",
+      "body": ""
+    },
+    "planets": [
+      {
+        "name": "",
+        "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
+        "title": "",
+        "subtext": "",
+        "body": ""
+      },
+      {
+        "name": "",
+        "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
+        "title": "",
+        "subtext": "",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "id": "etc-amp",
+    "name": "ETC Bot",
+    "galaxyPosition": { "x": 0.35, "y": 0.45 },
+    "color": "hsl(190, 100%, 70%)",
+    "sun": {
+      "title": "Project Core: ",
+      "subtext": "",
+      "color": "hsl(45, 100%, 75%)",
+      "body": ""
+    },
+    "planets": [
+      {
+        "name": "",
+        "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
+        "title": "",
+        "subtext": "",
+        "body": ""
+      },
+      {
+        "name": "",
+        "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
+        "title": "",
+        "subtext": "",
+        "body": ""
+      }
+    ]
+  },
+  {
+    "id": "",
+    "name": "",
+    "galaxyPosition": { "x": 0.35, "y": 0.45 },
+    "color": "hsl(190, 100%, 70%)",
+    "sun": {
+      "title": "Project Core: ",
+      "subtext": "",
+      "color": "hsl(45, 100%, 75%)",
+      "body": ""
+    },
+    "planets": [
+      {
+        "name": "",
+        "orbitRadius": 120, "size": 15, "color": "hsl(200, 80%, 70%)",
+        "title": "",
+        "subtext": "",
+        "body": ""
+      },
+      {
+        "name": "",
+        "orbitRadius": 200, "size": 20, "color": "hsl(260, 80%, 75%)",
+        "title": "",
+        "subtext": "",
+        "body": ""
+      }
+    ]
   }
 ]

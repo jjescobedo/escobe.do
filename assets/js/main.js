@@ -341,36 +341,33 @@ class App {
   }
 
   resizeCanvas() {
-    const devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2); // Cap DPR at 2
+    const devicePixelRatio = 1
     const width = window.innerWidth;
     const height = window.innerHeight;
     
-    // Set display size
     this.canvas.style.width = width + 'px';
     this.canvas.style.height = height + 'px';
     
-    // Set actual size in memory (scaled for high DPI)
     this.canvas.width = width * devicePixelRatio;
     this.canvas.height = height * devicePixelRatio;
+
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     
-    // Scale the context to ensure correct drawing
     this.ctx.scale(devicePixelRatio, devicePixelRatio);
     this.ctx.imageSmoothingEnabled = false;
     
-    // Update offscreen canvas
     if (this.useOffscreenCanvas && this.offscreenCanvas) {
       this.offscreenCanvas.width = this.canvas.width;
       this.offscreenCanvas.height = this.canvas.height;
+      this.offscreenCtx.setTransform(1, 0, 0, 1, 0, 0);
       this.offscreenCtx.scale(devicePixelRatio, devicePixelRatio);
       this.offscreenCtx.imageSmoothingEnabled = false;
     }
     
-    // Notify active view of resize
     if (this.activeView && this.activeView.resize) {
       this.activeView.resize(this.canvas);
     }
     
-    // Reload view if data is available
     if (this.projectData && this.aboutData) {
       this.handleRouteChange();
     }
