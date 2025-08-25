@@ -95,7 +95,7 @@ class AboutView {
 
   const distToBack = Math.sqrt(Math.pow(mouseX - this.backButton.x, 2) + Math.pow(mouseY - this.backButton.y, 2));
   if (distToBack < this.backButton.radius) {
-    document.getElementById('floating-profile-box').style.display = 'none'; // Hide when going back
+    document.getElementById('floating-profile-box').style.display = 'none';
     if (this.onBack) this.onBack();
     return;
   }
