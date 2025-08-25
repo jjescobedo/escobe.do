@@ -9,28 +9,7 @@ class ProjectModal {
     this.closeButton = this.modalElement.querySelector('.modal-close-button');
     this.isOpen = false;
 
-    this.pages = [];
-    this.currentPage = 0;
-
     this.closeButton.addEventListener('click', () => this.hide());
-
-    this.arrowsContainer = document.createElement('div');
-    this.arrowsContainer.className = 'modal-arrows-container';
-    this.arrowLeft = document.createElement('button');
-    this.arrowRight = document.createElement('button');
-    this.arrowLeft.textContent = '←';
-    this.arrowRight.textContent = '→';
-    this.arrowLeft.className = 'modal-arrow inactive';
-    this.arrowRight.className = 'modal-arrow inactive';
-    this.arrowLeft.onclick = () => this.prevPage();
-    this.arrowRight.onclick = () => this.nextPage();
-    this.arrowsContainer.appendChild(this.arrowLeft);
-    this.arrowsContainer.appendChild(this.arrowRight);
-    this.modalElement.appendChild(this.arrowsContainer);
-  }
-
-  paginateText(text) {
-    return text.split('\t').map(page => page.trim()).filter(page => page.length > 0);
   }
 
   show(data) {
@@ -56,9 +35,8 @@ class ProjectModal {
       this.imagesElement.appendChild(img);
     }
 
-    this.pages = this.paginateText(data.body || '', 800);
-    this.currentPage = 0;
-    this.renderBody();
+    // Just set the body content, convert newlines to <br>
+    this.bodyElement.innerHTML = (data.body || '').replace(/\n/g, '<br>');
 
     this.footerElement.innerHTML = '';
     if (data.links) {
@@ -100,41 +78,8 @@ class ProjectModal {
       });
     }
 
-    this.updateArrows();
-
     this.modalElement.classList.add('modal-visible');
     this.isOpen = true;
-  }
-
-  renderBody() {
-    const page = this.pages[this.currentPage] || '';
-    this.bodyElement.innerHTML = page.replace(/\n/g, '<br>');
-  }
-
-  prevPage() {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.renderBody();
-      this.updateArrows();
-    }
-  }
-
-  nextPage() {
-    if (this.currentPage < this.pages.length - 1) {
-      this.currentPage++;
-      this.renderBody();
-      this.updateArrows();
-    }
-  }
-
-  updateArrows() {
-    if (this.pages.length > 1) {
-      this.arrowsContainer.style.display = 'flex';
-      this.arrowLeft.className = 'modal-arrow' + (this.currentPage > 0 ? ' active' : ' inactive');
-      this.arrowRight.className = 'modal-arrow' + (this.currentPage < this.pages.length - 1 ? ' active' : ' inactive');
-    } else {
-      this.arrowsContainer.style.display = 'none';
-    }
   }
 
   hide() {
