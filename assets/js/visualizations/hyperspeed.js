@@ -3,16 +3,13 @@ class Hyperspeed {
     this.canvas = canvas;
     this.direction = direction;
     
-    // Calculate diagonal distance for full coverage
     const diagonal = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
     this.maxDistance = diagonal * 0.6;
     this.centerX = canvas.width / 2;
     this.centerY = canvas.height / 2;
     
-    // Reduced star count for better performance
     this.starCount = 1000;
     
-    // Use typed arrays for better performance
     this.starAngles = new Float32Array(this.starCount);
     this.starDistances = new Float32Array(this.starCount);
     this.starSpeeds = new Float32Array(this.starCount);
@@ -20,17 +17,13 @@ class Hyperspeed {
     this.starAlphas = new Float32Array(this.starCount);
     this.starTrailLengths = new Float32Array(this.starCount);
     
-    // Pre-allocate arrays for drawing calculations
-    this.starPositions = new Float32Array(this.starCount * 4); // x1, y1, x2, y2 for each star
+    this.starPositions = new Float32Array(this.starCount * 4);
     
-    // Initialize stars
     this.initializeStars();
     
-    // Performance tracking
     this.lastUpdateTime = 0;
     this.updateInterval = 15;
     
-    // Viewport culling bounds (with buffer)
     this.cullBuffer = 200;
     this.minX = -this.cullBuffer;
     this.maxX = canvas.width + this.cullBuffer;
@@ -60,7 +53,6 @@ class Hyperspeed {
     if (currentTime - this.lastUpdateTime < this.updateInterval) return;
     this.lastUpdateTime = currentTime;
 
-    // Batch update all stars
     for (let i = 0; i < this.starCount; i++) {
       if (this.direction === 'in') {
         this.starDistances[i] += this.starSpeeds[i];
@@ -79,7 +71,6 @@ class Hyperspeed {
       }
     }
 
-    // Pre-calculate positions for drawing
     this.calculateStarPositions();
   }
 
@@ -90,18 +81,15 @@ class Hyperspeed {
       const cosAngle = Math.cos(angle);
       const sinAngle = Math.sin(angle);
       
-      // Current position
       const x = this.centerX + cosAngle * distance;
       const y = this.centerY + sinAngle * distance;
       
-      // Trail start position
       const trailDistance = this.direction === 'in' 
         ? distance - this.starTrailLengths[i] 
         : distance + this.starTrailLengths[i];
       const px = this.centerX + cosAngle * trailDistance;
       const py = this.centerY + sinAngle * trailDistance;
       
-      // Store positions
       this.starPositions[i * 4] = px;
       this.starPositions[i * 4 + 1] = py;
       this.starPositions[i * 4 + 2] = x;
@@ -110,7 +98,6 @@ class Hyperspeed {
   }
 
   draw(ctx, globalAlpha) {
-    // Batch drawing with minimal context state changes
     ctx.save();
     ctx.lineCap = 'round';
     
@@ -122,13 +109,11 @@ class Hyperspeed {
       const x = this.starPositions[i * 4 + 2];
       const y = this.starPositions[i * 4 + 3];
       
-      // Viewport culling - only draw stars that are visible
       if (x >= this.minX && x <= this.maxX && y >= this.minY && y <= this.maxY) {
         const alpha = this.starAlphas[i] * globalAlpha;
         const size = this.starSizes[i];
         
-        if (alpha > 0.01) { // Skip nearly transparent stars
-          // Use gradient for smooth trails (cached when possible)
+        if (alpha > 0.01) {
           const gradient = ctx.createLinearGradient(px, py, x, y);
           gradient.addColorStop(0, `rgba(255, 255, 255, 0)`);
           gradient.addColorStop(1, `rgba(255, 255, 255, ${alpha})`);
@@ -148,7 +133,6 @@ class Hyperspeed {
     ctx.restore();
   }
 
-  // Method to handle canvas resize
   resize(canvas) {
     this.canvas = canvas;
     const diagonal = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
@@ -156,7 +140,6 @@ class Hyperspeed {
     this.centerX = canvas.width / 2;
     this.centerY = canvas.height / 2;
     
-    // Update culling bounds
     this.minX = -this.cullBuffer;
     this.maxX = canvas.width + this.cullBuffer;
     this.minY = -this.cullBuffer;

@@ -1,6 +1,6 @@
 class GalaxyCenter {
   constructor(canvas) {
-    this.x = 0; // Always at the center of the rotated context
+    this.x = 0;
     this.y = 0;
     
     this.baseRadius = 15;
@@ -18,16 +18,13 @@ class GalaxyCenter {
   }
   
   update() {
-    // Smoothly animate the radius on hover
     this.currentRadius += (this.targetRadius - this.currentRadius) * this.easingFactor;
-    // Add a subtle pulsing effect
     this.pulse = Math.sin(Date.now() * 0.001) * 2;
   }
 
 draw(ctx, globalAlpha = 1.0) {
   const radius = this.currentRadius + this.pulse;
 
-  // Create a radial gradient for a "white star" or "light core" effect
   const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, radius);
   gradient.addColorStop(0, `rgba(255, 255, 255, ${globalAlpha})`);
   gradient.addColorStop(0.3, `rgba(240, 248, 255, ${globalAlpha * 0.9})`);
@@ -36,16 +33,14 @@ draw(ctx, globalAlpha = 1.0) {
   
   ctx.fillStyle = gradient;
   ctx.beginPath();
-  ctx.arc(this.x, this.y, radius * 2.5, 0, Math.PI * 2); // Larger gradient for a soft glow
+  ctx.arc(this.x, this.y, radius * 2.5, 0, Math.PI * 2);
   ctx.fill();
 
-  // Draw the solid bright core
   ctx.fillStyle = `rgba(255, 255, 255, ${globalAlpha})`;
   ctx.beginPath();
   ctx.arc(this.x, this.y, radius * 0.6, 0, Math.PI * 2);
   ctx.fill();
 
-  // Add a subtle outer ring for definition
   ctx.strokeStyle = `rgba(255, 255, 255, ${globalAlpha * 0.8})`;
   ctx.lineWidth = 1;
   ctx.beginPath();

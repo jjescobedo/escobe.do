@@ -6,20 +6,17 @@ class GalaxyView {
     this.onStarSystemClick = null;
     this.onCenterClick = null;
     
-    // Pre-calculate values for performance
     this.centerX = canvas.width / 2;
     this.centerY = canvas.height / 2;
     this.lastCanvasWidth = canvas.width;
     this.lastCanvasHeight = canvas.height;
-  // Info modal
-  this.aboutData = aboutData;
-  this.infoModal = new ProjectModal();
-  this.infoButton = { radius: 22 };
+  
+    this.aboutData = aboutData;
+    this.infoModal = new ProjectModal();
+    this.infoButton = { radius: 22 };
     
-    // Create the galaxy center
     this.center = new GalaxyCenter(canvas);
 
-    // Optimized galaxy configuration - reduced particle counts
     this.layerConfigs = [
         { numParticles: 800, armTightness: 1.2, armSpread: 1.6, minSize: 0.4, maxSize: 0.8, minAlpha: 0.1, maxAlpha: 0.3, rotationSpeed: 0.0001, color: 'hsl(240, 80%, 70%)' },
         { numParticles: 1000, armTightness: 0.1, armSpread: 3, minSize: 0.5, maxSize: 1.2, minAlpha: 0.4, maxAlpha: 0.8, rotationSpeed: 0.00095, color: 'hsl(260, 90%, 80%)' },
@@ -29,24 +26,20 @@ class GalaxyView {
     
     this.numArms = 6;
 
-    // Cache star systems
     for (const project of Object.values(data)) {
       this.starSystems.push(new StarSystem(project, canvas));
     }
 
-    // Pre-generate all layers
     this.layerConfigs.forEach(config => {
       this.layers.push(this.generateLayer(config));
     });
 
-    // Performance optimizations
     this.lastMouseX = 0;
     this.lastMouseY = 0;
-    this.mouseThrottleDistance = 5; // Only update hover if mouse moved more than 5px
+    this.mouseThrottleDistance = 5;
     this.hoveredSystem = null;
     this.foregroundRotation = 0;
     
-    // Pre-calculate rotation matrices
     this.rotationCache = new Float32Array(2);
   }
 
@@ -62,7 +55,6 @@ class GalaxyView {
     const particles = [];
     const maxDist = Math.max(this.centerX, this.centerY);
 
-    // Use typed arrays for better performance
     const particlePositions = new Float32Array(config.numParticles * 2);
     const particleSizes = new Float32Array(config.numParticles);
     const particleAlphas = new Float32Array(config.numParticles);
@@ -96,7 +88,6 @@ class GalaxyView {
   }
 
   update(mouseX, mouseY) {
-    // Check if canvas was resized
     if (this.canvas.width !== this.lastCanvasWidth || this.canvas.height !== this.lastCanvasHeight) {
       this.centerX = this.canvas.width / 2;
       this.centerY = this.canvas.height / 2;
@@ -104,15 +95,12 @@ class GalaxyView {
       this.lastCanvasHeight = this.canvas.height;
     }
 
-    // Update layer rotations
     for (let i = 0; i < this.layers.length; i++) {
       this.layers[i].rotation += this.layers[i].config.rotationSpeed;
     }
 
-    // Cache foreground rotation
     this.foregroundRotation = this.layers[this.layers.length - 1].rotation;
 
-    // Throttle mouse hover calculations
     const mouseDeltaX = mouseX - this.lastMouseX;
     const mouseDeltaY = mouseY - this.lastMouseY;
     const mouseDistance = Math.sqrt(mouseDeltaX * mouseDeltaX + mouseDeltaY * mouseDeltaY);
@@ -123,7 +111,6 @@ class GalaxyView {
       this.lastMouseY = mouseY;
     }
 
-    // Update star systems
     for (let i = 0; i < this.starSystems.length; i++) {
       this.starSystems[i].update();
     }
@@ -137,7 +124,6 @@ class GalaxyView {
     const angle = Math.atan2(dy, dx);
     const dist = Math.sqrt(dx * dx + dy * dy);
     
-    // Pre-calculate rotation values
     const cosR = Math.cos(angle - this.foregroundRotation);
     const sinR = Math.sin(angle - this.foregroundRotation);
     const rotatedX = cosR * dist;
@@ -145,24 +131,21 @@ class GalaxyView {
     
     let isHoveringSomething = false;
     
-    // Reset previous hover state
     if (this.hoveredSystem) {
       this.hoveredSystem.setHover(false);
       this.hoveredSystem = null;
     }
     
-    // Check star systems
     for (let i = 0; i < this.starSystems.length; i++) {
       const system = this.starSystems[i];
       if (system.isClicked(rotatedX, rotatedY)) {
         system.setHover(true);
         this.hoveredSystem = system;
         isHoveringSomething = true;
-        break; // Only one can be hovered at a time
+        break;
       }
     }
     
-    // Check center
     const centerHovered = this.center.isClicked(rotatedX, rotatedY);
     this.center.setHover(centerHovered);
     if (centerHovered) isHoveringSomething = true;
@@ -171,15 +154,12 @@ class GalaxyView {
   }
 
   draw(ctx, globalAlpha = 1.0) {
-    // Use transform caching
     ctx.save();
     ctx.translate(this.centerX, this.centerY);
-    // Draw layers with optimized rendering
     for (let layerIndex = 0; layerIndex < this.layers.length; layerIndex++) {
       const layer = this.layers[layerIndex];
       ctx.save();
       ctx.rotate(layer.rotation);
-      // Batch rendering with minimal state changes
       ctx.fillStyle = layer.color;
       ctx.beginPath();
       const positions = layer.positions;
@@ -199,7 +179,6 @@ class GalaxyView {
       }
       ctx.fill();
       ctx.globalAlpha = 1.0;
-      // Draw star systems and center only on the final layer
       if (layerIndex === this.layers.length - 1) {
         for (let i = 0; i < this.starSystems.length; i++) {
           this.starSystems[i].draw(ctx, globalAlpha);
@@ -209,7 +188,6 @@ class GalaxyView {
       ctx.restore();
     }
     ctx.restore();
-    // Draw hover tooltip only if needed
     if (this.hoveredSystem) {
       this.drawHoverTooltip(ctx, globalAlpha);
     }
@@ -273,7 +251,6 @@ class GalaxyView {
   }
   
   handleClick(event) {
-    // Info button click
     const pad = 24;
     const x = this.canvas.width - pad - this.infoButton.radius;
     const y = pad + this.infoButton.radius;
@@ -288,7 +265,7 @@ class GalaxyView {
         if (this.aboutData && this.aboutData.help) {
           this.infoModal.show({
             title: this.aboutData.help.title || 'Help',
-            subtext: '',
+            subtext: this.aboutData.help.subtext || '',
             body: this.aboutData.help.body || ''
           });
         }

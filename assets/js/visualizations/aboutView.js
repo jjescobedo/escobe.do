@@ -81,19 +81,21 @@ class AboutView {
   const mouseX = event.clientX - rect.left;
   const mouseY = event.clientY - rect.top;
 
-  // If modal is open, hide it
   if (this.modal.isOpen) {
     this.modal.hide();
+    document.getElementById('floating-profile-box').style.display = 'none';
     return;
   }
 
   if (this.infoBox.isOpen) {
     this.infoBox.hide();
+    document.getElementById('floating-profile-box').style.display = 'none';
     return;
   }
 
   const distToBack = Math.sqrt(Math.pow(mouseX - this.backButton.x, 2) + Math.pow(mouseY - this.backButton.y, 2));
   if (distToBack < this.backButton.radius) {
+    document.getElementById('floating-profile-box').style.display = 'none'; // Hide when going back
     if (this.onBack) this.onBack();
     return;
   }
@@ -102,13 +104,15 @@ class AboutView {
   const centerY = this.canvas.height / 2;
   const distToCenter = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
   if (distToCenter < this.radius) {
-    // Show modal with about.json data
     this.modal.show({
       title: this.aboutData.title,
       subtext: '',
-      body: this.aboutData.info
+      body: this.aboutData.info,
+      profileImage: this.aboutData.profileImage,
+      links: true
     });
+    document.getElementById('floating-profile-box').style.display = 'block';
     return;
   }
-  }
+}
 }

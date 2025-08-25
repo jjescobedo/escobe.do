@@ -3,9 +3,8 @@ class App {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     
-    // Enable hardware acceleration and optimizations
     this.ctx.globalCompositeOperation = 'source-over';
-    this.ctx.imageSmoothingEnabled = false; // Disable for pixel-perfect rendering
+    this.ctx.imageSmoothingEnabled = false;
     
     this.projectData = null;
     this.aboutData = null;
@@ -20,25 +19,20 @@ class App {
       targetViewData: null
     };
 
-    // Enhanced performance optimizations
     this.lastFrameTime = 0;
     this.targetFPS = 60;
     this.frameInterval = 1000 / this.targetFPS;
     this.lastResizeTime = 0;
     this.resizeDebounceDelay = 250;
     
-    // Mouse event throttling - more aggressive
     this.lastMouseTime = 0;
-    this.mouseThrottleDelay = 33; // ~30fps instead of 60fps for mouse
+    this.mouseThrottleDelay = 33;
     
-    // Pre-allocate frequently used values
     this.backgroundColor = '#00001a';
     
-    // RAF management
     this.rafId = null;
     this.isRunning = false;
     
-    // Canvas optimization
     this.offscreenCanvas = null;
     this.offscreenCtx = null;
     this.useOffscreenCanvas = true;
@@ -53,7 +47,6 @@ class App {
   }
 
   initOffscreenCanvas() {
-    // Create offscreen canvas for complex scenes
     if (this.useOffscreenCanvas && typeof OffscreenCanvas !== 'undefined') {
       this.offscreenCanvas = new OffscreenCanvas(this.canvas.width, this.canvas.height);
       this.offscreenCtx = this.offscreenCanvas.getContext('2d');
@@ -62,7 +55,6 @@ class App {
   }
 
   bindEvents() {
-    // Passive event listeners for better performance
     window.addEventListener('resize', () => {
       const now = performance.now();
       if (now - this.lastResizeTime > this.resizeDebounceDelay) {
@@ -71,7 +63,6 @@ class App {
       }
     }, { passive: true });
     
-    // More aggressive mouse throttling
     this.canvas.addEventListener('mousemove', (e) => {
       const now = performance.now();
       if (now - this.lastMouseTime > this.mouseThrottleDelay) {
@@ -83,7 +74,6 @@ class App {
     this.canvas.addEventListener('click', (e) => this.handleClick(e));
     window.addEventListener('popstate', () => this.handleRouteChange());
     
-    // Enhanced visibility API
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         this.pauseAnimations();
@@ -116,7 +106,6 @@ class App {
     this.update(performance.now());
   }
 
-  // --- ROUTING LOGIC (unchanged) ---
   handleRouteChange() {
     const path = window.location.pathname;
     
@@ -168,7 +157,8 @@ class App {
     history.pushState({}, 'Galaxy', '/');
     this.appState = 'FADING_OUT_VIEW';
     this.transitionState.progress = 0;
-    this.transitionState.duration = 60; // Reduced from 60
+    this.transitionState.duration = 60;
+    document.getElementById('floating-profile-box').style.display = 'none';
   }
 
   async loadData() {
@@ -194,7 +184,6 @@ class App {
   update(currentTime) {
     if (!this.isRunning) return;
 
-    // More aggressive frame rate limiting
     if (currentTime - this.lastFrameTime < this.frameInterval) {
       this.rafId = requestAnimationFrame((time) => this.update(time));
       return;
@@ -216,24 +205,24 @@ class App {
 
       case 'FADING_OUT_GALAXY':
       case 'FADING_OUT_VIEW':
-        ts.progress += 2; // Faster transitions
+        ts.progress += 2;
         if (ts.progress >= ts.duration) {
           this.appState = this.appState === 'FADING_OUT_GALAXY' ? 'HYPERSPEED_IN' : 'HYPERSPEED_OUT';
           this.activeView = new Hyperspeed(this.canvas, this.appState === 'HYPERSPEED_IN' ? 'in' : 'out');
           ts.progress = 0;
-          ts.duration = 120; // Reduced from 180
+          ts.duration = 120;
         }
         break;
         
       case 'HYPERSPEED_IN':
       case 'HYPERSPEED_OUT':
         if (this.activeView) this.activeView.update(deltaTime);
-        ts.progress += 2; // Faster transitions
+        ts.progress += 2;
         if (ts.progress >= ts.duration) {
           this.appState = this.appState === 'HYPERSPEED_IN' ? 'PAUSE_BEFORE_NEW_VIEW' : 'PAUSE_BEFORE_GALAXY';
           this.activeView = null;
           ts.progress = 0;
-          ts.duration = 30; // Reduced from 90
+          ts.duration = 30;
         }
         break;
 
@@ -256,14 +245,14 @@ class App {
             this.activeView.setAboutTransitionCallback(() => this.beginTransitionToAbout());
           }
           ts.progress = 0;
-          ts.duration = 60; // Reduced from 120
+          ts.duration = 60;
         }
         break;
         
       case 'FADING_IN_SOLAR':
       case 'FADING_IN_GALAXY':
       case 'FADING_IN_ABOUT':
-        ts.progress += 2; // Faster transitions
+        ts.progress += 2;
         if (this.activeView) this.activeView.update(this.mouseX, this.mouseY, deltaTime);
         if (ts.progress >= ts.duration) {
           if (this.appState === 'FADING_IN_SOLAR') this.appState = 'SOLAR_SYSTEM';
@@ -278,10 +267,8 @@ class App {
   }
 
   draw() {
-    // Use double buffering for complex scenes
     const targetCtx = this.useOffscreenCanvas && this.offscreenCtx ? this.offscreenCtx : this.ctx;
     
-    // More efficient background clear
     targetCtx.fillStyle = this.backgroundColor;
     targetCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     
@@ -320,7 +307,6 @@ class App {
         break;
     }
 
-    // Copy offscreen canvas to main canvas if using double buffering
     if (this.useOffscreenCanvas && this.offscreenCtx) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.drawImage(this.offscreenCanvas, 0, 0);
@@ -373,7 +359,6 @@ class App {
     }
   }
 
-  // Cleanup method
   destroy() {
     this.pauseAnimations();
     if (this.rafId) {
@@ -382,7 +367,6 @@ class App {
   }
 }
 
-// Performance-aware initialization with error handling
 window.addEventListener('load', () => {
   const canvas = document.getElementById('galaxy-canvas');
   if (canvas) {
@@ -390,7 +374,6 @@ window.addEventListener('load', () => {
       const app = new App(canvas);
       app.start();
       
-      // Cleanup on page unload
       window.addEventListener('beforeunload', () => {
         app.destroy();
       });

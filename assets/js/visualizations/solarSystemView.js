@@ -7,34 +7,27 @@ class SolarSystemView {
     this.modal = new ProjectModal();
     this.backButton = { x: 40, y: 40, radius: 20 };
     
-    // Pre-calculate center position
     this.centerX = canvas.width / 2;
     this.centerY = canvas.height / 2;
     
-    // Optimized background stars - fewer stars, better performance
     this.backgroundStars = [];
-    this.starCount = 200; // Reduced from 400
+    this.starCount = 200;
     this.initializeBackgroundStars();
     
-    // Initialize planets
     if (this.projectData.planets) {
       this.projectData.planets.forEach(pData => {
         this.planets.push(new Planet(pData));
       });
     }
     
-    // Pre-calculate sun properties
     const sunData = this.projectData.sun;
     this.sunColor = sunData.color || 'hsl(60, 100%, 100%)';
     this.sunRadius = 50;
     
-    // Performance tracking
     this.lastUpdateTime = 0;
     this.updateInterval = 16; // ~60fps
     
-    // Star recycling pool
     this.recycledStars = [];
-    // Animated system name reveal
     this.animatedName = '';
     this.animatedDate = '';
     this.nameTypingProgress = 0;
@@ -42,8 +35,8 @@ class SolarSystemView {
     this.nameTypingDone = false;
     this.dateTypingDone = false;
     this.typingStartTime = null;
-    this.typingSpeed = 150; // ms per character
-    this.dateTypingSpeed = 80; // ms per character (date types a bit faster)
+    this.typingSpeed = 150;
+    this.dateTypingSpeed = 80;
   }
 
   initializeBackgroundStars() {
@@ -53,7 +46,7 @@ class SolarSystemView {
         y: Math.random() * this.canvas.height,
         size: Math.random() * 1.5 + 0.5,
         alpha: Math.random() * 0.5 + 0.1,
-        speed: 0.05 + Math.random() * 0.1 // Variable speed for depth
+        speed: 0.05 + Math.random() * 0.1
       });
     }
   }
@@ -63,29 +56,24 @@ class SolarSystemView {
     if (currentTime - this.lastUpdateTime < this.updateInterval) return;
     this.lastUpdateTime = currentTime;
 
-    // Always update planets - no modal checks
     for (let i = 0; i < this.planets.length; i++) {
       this.planets[i].update();
     }
     
-    // Optimized star animation with recycling
     for (let i = 0; i < this.backgroundStars.length; i++) {
       const star = this.backgroundStars[i];
       star.y += star.speed;
       
       if (star.y > this.canvas.height) {
-        // Recycle star instead of creating new properties
         star.y = -star.size;
         star.x = Math.random() * this.canvas.width;
       }
     }
     
-    // Update center position if canvas was resized
     if (this.centerX !== this.canvas.width / 2 || this.centerY !== this.canvas.height / 2) {
       this.centerX = this.canvas.width / 2;
       this.centerY = this.canvas.height / 2;
     }
-    // Animated system name and discovered date typing effect
     if (!this.nameTypingDone) {
       if (!this.typingStartTime) {
         this.typingStartTime = currentTime;
@@ -100,7 +88,6 @@ class SolarSystemView {
         this.dateTypingStartTime = currentTime;
       }
     } else if (!this.dateTypingDone) {
-      // Type out the discovered date
       const dateStr = this.projectData.date ? `Discovered ${this.projectData.date}` : '';
       if (!this.dateTypingStartTime) {
         this.dateTypingStartTime = currentTime;
@@ -116,14 +103,11 @@ class SolarSystemView {
   }
 
   draw(ctx, globalAlpha = 1.0) {
-    // Batch draw background stars
     this.drawBackgroundStars(ctx, globalAlpha);
     
-    // Save context once for all solar system elements
     ctx.save();
     ctx.translate(this.centerX, this.centerY);
 
-    // Draw orbit paths with single style setting
     ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 * globalAlpha})`;
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -134,31 +118,26 @@ class SolarSystemView {
     }
     ctx.stroke();
 
-    // Draw sun with cached color
     this.drawSun(ctx, globalAlpha);
 
-    // Draw all planets
     for (let i = 0; i < this.planets.length; i++) {
       this.planets[i].draw(ctx, globalAlpha);
     }
     
     ctx.restore();
     
-    // Draw UI elements
     this.drawUI(ctx, globalAlpha);
-    // Draw animated system name and date in top left
     this.drawAnimatedHeader(ctx, globalAlpha);
   }
 
   drawBackgroundStars(ctx, globalAlpha) {
-    // Batch draw stars with minimal context changes
     ctx.save();
     
     for (let i = 0; i < this.backgroundStars.length; i++) {
       const star = this.backgroundStars[i];
       const alpha = star.alpha * globalAlpha;
       
-      if (alpha > 0.05) { // Skip nearly invisible stars
+      if (alpha > 0.05) {
         ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
@@ -180,18 +159,16 @@ class SolarSystemView {
     ctx.arc(0, 0, this.sunRadius, 0, Math.PI * 2);
     ctx.fill();
     
-    ctx.shadowBlur = 0; // Reset shadow to avoid affecting other elements
+    ctx.shadowBlur = 0;
   }
 
   drawUI(ctx, globalAlpha) {
-    // Draw back button
     ctx.strokeStyle = `rgba(255, 255, 255, ${globalAlpha})`;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(this.backButton.x, this.backButton.y, this.backButton.radius, 0, Math.PI * 2);
     ctx.stroke();
     
-    // Draw back arrow
     ctx.font = '20px monospace';
     ctx.fillStyle = `rgba(255, 255, 255, ${globalAlpha})`;
     ctx.textAlign = 'center';
@@ -200,10 +177,8 @@ class SolarSystemView {
   }
 
   drawAnimatedHeader(ctx, globalAlpha) {
-    // Position just right of back button
     const leftPad = this.backButton.x + this.backButton.radius + 18;
     const topPad = 18;
-    // Use galaxy font style
     ctx.save();
     ctx.font = 'bold 28px monospace';
     ctx.fillStyle = `rgba(255,255,255,${globalAlpha})`;
@@ -211,7 +186,6 @@ class SolarSystemView {
     ctx.textBaseline = 'top';
     ctx.fillText(this.animatedName, leftPad, topPad);
 
-    // Draw date below name as it types out
     if (this.animatedDate) {
       ctx.font = '16px monospace';
       ctx.fillStyle = `rgba(200,200,255,${globalAlpha})`;
@@ -229,30 +203,29 @@ class SolarSystemView {
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
 
-    // Check back button with cached distance calculation
     const backDeltaX = mouseX - this.backButton.x;
     const backDeltaY = mouseY - this.backButton.y;
-    const backDistance = backDeltaX * backDeltaX + backDeltaY * backDeltaY; // Skip sqrt for comparison
+    const backDistance = backDeltaX * backDeltaX + backDeltaY * backDeltaY;
     
     if (backDistance < this.backButton.radius * this.backButton.radius) {
       if (this.onBack) this.onBack();
       return;
     }
 
-    // Convert to solar system coordinates
     const clickX = mouseX - this.centerX;
     const clickY = mouseY - this.centerY;
     
-    // Check sun click with cached calculation
     const sunDistanceSquared = clickX * clickX + clickY * clickY;
     const sunClickRadius = 55;
-    
     if (sunDistanceSquared < sunClickRadius * sunClickRadius) {
-      this.modal.show(this.projectData.sun);
+      let sunData = { ...this.projectData.sun };
+      if (this.projectData.image) {
+        sunData.image = `assets/images/projects/${this.projectData.image}`;
+      }
+      this.modal.show(sunData);
       return;
     }
 
-    // Check planet clicks
     for (let i = 0; i < this.planets.length; i++) {
       if (this.planets[i].isClicked(clickX, clickY)) {
         this.modal.show(this.planets[i].data);
@@ -261,13 +234,11 @@ class SolarSystemView {
     }
   }
 
-  // Method to handle canvas resize
   resize(canvas) {
     this.canvas = canvas;
     this.centerX = canvas.width / 2;
     this.centerY = canvas.height / 2;
     
-    // Redistribute background stars
     for (let i = 0; i < this.backgroundStars.length; i++) {
       const star = this.backgroundStars[i];
       if (star.x > canvas.width || star.y > canvas.height) {
