@@ -1,9 +1,9 @@
 {
   "title": "A Little About Me",
-  "info": "Welcome to my corner of the universe. This portfolio is a showcase of my passion for creative coding, interactive design, and building unique digital experiences from the ground up.\n\nEach project you see is a 'star system' I've brought to life, built with a variety of technologies and a deep focus on creating engaging, memorable user interfaces. I believe that the web should be a space for artistry and exploration, not just information.\n\nThis entire visualization—from the procedurally generated galaxy to the cinematic transitions—is written in vanilla JavaScript, using the HTML5 Canvas API to render every particle and planet. It's a testament to what can be achieved with foundational web technologies.\n\nFeel free to explore. If you have any questions or would like to collaborate on a project, don't hesitate to reach out. The universe of possibility is vast, and I'm always ready for the next journey.",
+  "info": "Welcome to my corner of the universe. This portfolio is a showcase of my passion for creative coding, interactive design, and building unique digital experiences from the ground up.\n\nEach project you see is a 'star system' I've brought to life, built with a variety of technologies and a deep focus on creating engaging, memorable user interfaces. I believe that the web should be a space for artistry and exploration, not just information.\n\nThis entire visualization is written in vanilla JavaScript, using the HTML5 Canvas API to render every particle and planet. It's a testament to what can be achieved with foundational web technologies.\n\nFeel free to explore. If you have any questions or would like to collaborate on a project, don't hesitate to reach out. The universe of possibility is vast, and I'm always ready for the next journey.",
   "profileImage": "assets/images/james-escobedo-pfp-nobg.png",
   "help": {
-    "title": "Hey",
-    "body": "This is a dev portfolio site. My (James Escobedo) dev portfolio site. If you are here by accident, simply press ctrl + W. If you want to stay, press on the white thing in the center of the galaxy to learn more..."
+    "title": "Hey...",
+    "body": "This is my dev portfolio site. If you don't want to be here, simply press ctrl + W. If you want to stay, press on the center of the galaxy to start checking things out"
   }
 }

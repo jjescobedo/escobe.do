@@ -17,14 +17,22 @@
     <canvas id="galaxy-canvas"></canvas>
 
     <div id="project-modal" class="modal-hidden">
-        <div class="modal-content modal-wide">
-            <button class="modal-close-button">&times;</button>
-            <h1 id="modal-title"></h1>
-            <h2 id="modal-subtext"></h2>
-            <div id="modal-images"></div>
-            <div id="modal-body"></div>
-            <div id="modal-footer"></div>
-        </div>
+      <div class="modal-content modal-wide" id="project-modal-content">
+        <button class="modal-close-button">&times;</button>
+        <h1 id="modal-title"></h1>
+        <h2 id="modal-subtext"></h2>
+        <div id="modal-images"></div>
+        <div id="modal-body"></div>
+        <div id="modal-footer"></div>
+      </div>
+    </div>
+
+    <div id="galaxy-help-modal" class="modal-hidden">
+      <div class="modal-content modal-small">
+        <button class="modal-close-button">&times;</button>
+        <h1 id="galaxy-help-title"></h1>
+        <div id="galaxy-help-body"></div>
+      </div>
     </div>
 
     <div id="floating-profile-box">
@@ -33,6 +41,7 @@
 
     <script src="assets/js/ui/infoBox.js"></script>
     <script src="assets/js/ui/projectModal.js"></script>
+    <script src="assets/js/ui/galaxyHelpModal.js"></script>
     <script src="assets/js/components/starSystem.js"></script>
     <script src="assets/js/components/galaxyCenter.js"></script>
     <script src="assets/js/components/planet.js"></script>

@@ -41,6 +41,7 @@ class GalaxyView {
     this.foregroundRotation = 0;
     
     this.rotationCache = new Float32Array(2);
+    this.helpModal = new GalaxyHelpModal(); // <-- Add this line
   }
 
   setTransitionCallback(callback) {
@@ -191,7 +192,7 @@ class GalaxyView {
     if (this.hoveredSystem) {
       this.drawHoverTooltip(ctx, globalAlpha);
     }
-    // Draw info button in top right
+    
     this.drawInfoButton(ctx, globalAlpha);
   }
 
@@ -259,15 +260,14 @@ class GalaxyView {
     const mouseY = event.clientY - rect.top;
     const dist = Math.sqrt(Math.pow(mouseX - x, 2) + Math.pow(mouseY - y, 2));
     if (dist < this.infoButton.radius) {
-      if (this.infoModal.isOpen) {
-        this.infoModal.hide();
+      if (this.helpModal.isOpen) {
+        this.helpModal.hide();
       } else {
         if (this.aboutData && this.aboutData.help) {
-          this.infoModal.show({
-            title: this.aboutData.help.title || 'Help',
-            subtext: this.aboutData.help.subtext || '',
-            body: this.aboutData.help.body || ''
-          });
+          this.helpModal.show(
+            this.aboutData.help.title || 'Help',
+            this.aboutData.help.body || ''
+          );
         }
       }
       return;
