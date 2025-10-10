@@ -51,18 +51,27 @@ class SolarSystemView {
     }
   }
 
-  update(mouseX, mouseY) {
+  update(mouseX, mouseY, deltaTime = 16) {
     const currentTime = Date.now();
-    if (currentTime - this.lastUpdateTime < this.updateInterval) return;
-    this.lastUpdateTime = currentTime;
+    if (!deltaTime) {
+      if (currentTime - this.lastUpdateTime < this.updateInterval) return;
+      deltaTime = currentTime - this.lastUpdateTime;
+      this.lastUpdateTime = currentTime;
+    } else {
+      // keep lastUpdateTime in sync for other logic
+      this.lastUpdateTime = currentTime;
+    }
 
+    // update planets with time-based delta
     for (let i = 0; i < this.planets.length; i++) {
-      this.planets[i].update();
+      this.planets[i].update(deltaTime);
     }
     
+    // scale background star movement by deltaTime so motion remains consistent
+    const frameScale = deltaTime / 16;
     for (let i = 0; i < this.backgroundStars.length; i++) {
       const star = this.backgroundStars[i];
-      star.y += star.speed;
+      star.y += star.speed * frameScale;
       
       if (star.y > this.canvas.height) {
         star.y = -star.size;
@@ -74,6 +83,7 @@ class SolarSystemView {
       this.centerX = this.canvas.width / 2;
       this.centerY = this.canvas.height / 2;
     }
+
     if (!this.nameTypingDone) {
       if (!this.typingStartTime) {
         this.typingStartTime = currentTime;
@@ -119,6 +129,9 @@ class SolarSystemView {
     ctx.stroke();
 
     this.drawSun(ctx, globalAlpha);
+
+    // Ensure full alpha for planet sprites so their cached color / alpha updates render correctly
+    ctx.globalAlpha = 1.0;
 
     for (let i = 0; i < this.planets.length; i++) {
       this.planets[i].draw(ctx, globalAlpha);

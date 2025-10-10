@@ -63,15 +63,27 @@ class App {
       }
     }, { passive: true });
     
+    // Defensive mouse handlers: catch errors so they don't stop the RAF loop
     this.canvas.addEventListener('mousemove', (e) => {
       const now = performance.now();
       if (now - this.lastMouseTime > this.mouseThrottleDelay) {
-        this.handleMouseMove(e);
+        try {
+          this.handleMouseMove(e);
+        } catch (err) {
+          console.error('handleMouseMove error:', err);
+        }
         this.lastMouseTime = now;
       }
     }, { passive: true });
     
-    this.canvas.addEventListener('click', (e) => this.handleClick(e));
+    this.canvas.addEventListener('click', (e) => {
+      try {
+        this.handleClick(e);
+      } catch (err) {
+        console.error('handleClick error:', err);
+      }
+    });
+    
     window.addEventListener('popstate', () => this.handleRouteChange());
     
     document.addEventListener('visibilitychange', () => {
@@ -163,21 +175,65 @@ class App {
 
   async loadData() {
     try {
-      const [projectResponse, aboutResponse] = await Promise.all([
-        fetch('data/projects.json'),
-        fetch('data/about.json')
-      ]);
-      
-      if (!projectResponse.ok || !aboutResponse.ok) {
-        throw new Error('Failed to load data');
-      }
-      
+      const projectResponse = await fetch('data/projects.json');
+      if (!projectResponse.ok) throw new Error('Failed to load projects.json');
       this.projectData = await projectResponse.json();
-      this.aboutData = await aboutResponse.json();
+
+      let aboutData = null;
+      try {
+        const aboutResp = await fetch('data/about.json');
+        if (aboutResp.ok) {
+          aboutData = await aboutResp.json();
+        }
+      } catch (e) {
+        // fall through to txt-based loading if about.json is missing/invalid
+      }
+
+      if (!aboutData) {
+        let aboutText = '';
+        let infoMeta = null;
+
+        // load about.txt (long body)
+        try {
+          const aboutTxtResp = await fetch('data/about.txt');
+          if (aboutTxtResp.ok) aboutText = await aboutTxtResp.text();
+        } catch (e) {
+          // ignore
+        }
+
+        // load info.txt (small metadata or plain help text)
+        try {
+          const infoTxtResp = await fetch('data/info.txt');
+          if (infoTxtResp.ok) {
+            const infoText = await infoTxtResp.text();
+            try {
+              infoMeta = JSON.parse(infoText);
+            } catch (parseErr) {
+              
+              infoMeta = { help: { title: 'Hey...', body: infoText } };
+            }
+          }
+        } catch (e) {
+          
+        }
+
+        const helpObj = (infoMeta && infoMeta.help)
+          ? infoMeta.help
+          : { title: (infoMeta && infoMeta.title) || 'Hey...', body: (aboutText ? aboutText : (infoMeta && (infoMeta.info || infoMeta.body)) || 'This is my dev portfolio site.') };
+
+        aboutData = {
+          title: (infoMeta && infoMeta.title) || 'A Little About Me',
+          info: aboutText || (infoMeta && (infoMeta.info || infoMeta.body)) || 'About content unavailable.',
+          profileImage: (infoMeta && infoMeta.profileImage) || 'assets/images/james-escobedo-pfp-nobg.png',
+          help: helpObj
+        };
+      }
+
+      this.aboutData = aboutData;
     } catch (error) {
       console.error('Error loading data:', error);
       this.projectData = {};
-      this.aboutData = { title: "About", info: "Content loading failed." };
+      this.aboutData = { title: "About", info: "Content loading failed.", profileImage: 'assets/images/james-escobedo-pfp-nobg.png', help: { title: 'Help', body: '' } };
     }
   }
 
@@ -189,7 +245,9 @@ class App {
       return;
     }
 
-    const deltaTime = currentTime - this.lastFrameTime;
+    let deltaTime = currentTime - this.lastFrameTime;
+    // clamp deltaTime to avoid huge first-frame or resumed-frame jumps (ms)
+    deltaTime = Math.min(deltaTime, 40);
     this.lastFrameTime = currentTime;
 
     const ts = this.transitionState;
@@ -199,7 +257,11 @@ class App {
       case 'SOLAR_SYSTEM':
       case 'ABOUT_VIEW':
         if (this.activeView) {
-          this.activeView.update(this.mouseX, this.mouseY, deltaTime);
+          try {
+            this.activeView.update(this.mouseX, this.mouseY, deltaTime);
+          } catch (err) {
+            console.error('activeView.update error:', err);
+          }
         }
         break;
 
@@ -216,7 +278,13 @@ class App {
         
       case 'HYPERSPEED_IN':
       case 'HYPERSPEED_OUT':
-        if (this.activeView) this.activeView.update(deltaTime);
+        if (this.activeView) {
+          try {
+            this.activeView.update(deltaTime);
+          } catch (err) {
+            console.error('hyperspeed.update error:', err);
+          }
+        }
         ts.progress += 2;
         if (ts.progress >= ts.duration) {
           this.appState = this.appState === 'HYPERSPEED_IN' ? 'PAUSE_BEFORE_NEW_VIEW' : 'PAUSE_BEFORE_GALAXY';
@@ -262,7 +330,12 @@ class App {
         break;
     }
     
-    this.draw();
+    // defensive draw: ensure errors during draw don't stop the RAF loop
+    try {
+      this.draw();
+    } catch (err) {
+      console.error('draw error:', err);
+    }
     this.rafId = requestAnimationFrame((time) => this.update(time));
   }
 
@@ -279,20 +352,38 @@ class App {
       case 'GALAXY':
       case 'SOLAR_SYSTEM':
       case 'ABOUT_VIEW':
-        if (this.activeView) this.activeView.draw(targetCtx, 1.0);
+        if (this.activeView) {
+          try {
+            this.activeView.draw(targetCtx, 1.0);
+          } catch (err) {
+            console.error('activeView.draw error:', err);
+          }
+        }
         break;
         
       case 'FADING_OUT_GALAXY':
       case 'FADING_OUT_VIEW':
         fadeAlpha = 1.0 - (ts.progress / ts.duration);
-        if (this.activeView) this.activeView.draw(targetCtx, fadeAlpha);
+        if (this.activeView) {
+          try {
+            this.activeView.draw(targetCtx, fadeAlpha);
+          } catch (err) {
+            console.error('activeView.draw error:', err);
+          }
+        }
         break;
         
       case 'HYPERSPEED_IN':
       case 'HYPERSPEED_OUT':
         const t = ts.progress / ts.duration;
         fadeAlpha = Math.sin(t * Math.PI);
-        if (this.activeView) this.activeView.draw(targetCtx, fadeAlpha);
+        if (this.activeView) {
+          try {
+            this.activeView.draw(targetCtx, fadeAlpha);
+          } catch (err) {
+            console.error('activeView.draw error:', err);
+          }
+        }
         break;
         
       case 'PAUSE_BEFORE_NEW_VIEW':

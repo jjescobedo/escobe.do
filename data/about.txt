@@ -1,0 +1,7 @@
+Welcome to my corner of the universe. This portfolio is a showcase of my passion for creative coding, interactive design, and building unique digital experiences from the ground up.
+
+Each project you see is a “star system” I've brought to life. This entire visualization is written in vanilla JavaScript, using the HTML5 Canvas API to render every particle and planet. It's a testament to what can be achieved with foundational web technologies.
+
+When I’m not coding, I love to cook, watch Tottenham Hotspur FC, play videogames with my friends, read, workout, and play the piano. In case it’s not obvious yet, I like to abide by a nature of well-roundedness in my life, with my tech journey being no exception. I see no reason why you can’t be great at multiple facets of the same topic (I do understand what specialization is). I’m gonna keep building my breadth of knowledge as much as I can; when I finally find that area of expertise I could really get into, it will be readily apparent.
+
+Feel free to explore. If you have any questions or would like to collaborate on a project, don't hesitate to reach out. The universe of possibility is vast, and I'm always ready for the next journey.

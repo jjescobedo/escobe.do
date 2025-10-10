@@ -104,15 +104,14 @@ class AboutView {
   const centerY = this.canvas.height / 2;
   const distToCenter = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
   if (distToCenter < this.radius) {
-    this.modal.show({
-      title: this.aboutData.title,
-      subtext: '',
-      body: this.aboutData.info,
-      profileImage: this.aboutData.profileImage,
-      links: true
-    });
-    document.getElementById('floating-profile-box').style.display = 'block';
-    return;
-  }
+      // show about modal but do NOT expose the profile image for now
+      this.modal.show({
+        title: this.aboutData.title,
+        subtext: '',
+        body: this.aboutData.info,
+        links: true
+      });
+      return;
+    }
 }
 }
