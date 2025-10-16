@@ -57,7 +57,7 @@ class ProjectModal {
           alt: 'Email',
         },
         {
-          href: 'data/james-escobedo-resume-september.pdf',
+          href: 'data/james-escobedo-resume-october.pdf',
           svg: 'https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/adobeacrobatreader.svg',
           alt: 'Resume',
           download: true,
